@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import taba5.Artvis.dto.LikeDto;
+import taba5.Artvis.dto.Like.ExhibitionLikeDto;
 import taba5.Artvis.service.LikeService;
 
 import java.util.List;
@@ -19,11 +19,11 @@ public class LikeController {
     }
 
     @PostMapping("/save")
-    public LikeDto save(LikeDto likeDto){
-        return likeService.save(likeDto);
+    public ExhibitionLikeDto save(ExhibitionLikeDto exhibitionLikeDto){
+        return likeService.save(exhibitionLikeDto);
     }
     @GetMapping("/get/exhibition")
-    public List<LikeDto> getExhibitionLikeList(Long memberId){
+    public List<ExhibitionLikeDto> getExhibitionLikeList(Long memberId){
         return likeService.getExhibitionLikes(memberId);
     }
 }

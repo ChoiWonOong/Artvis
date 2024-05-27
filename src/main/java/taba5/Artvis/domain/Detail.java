@@ -17,9 +17,7 @@ public class Detail {
 
     private String attribute;
     private String contents;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exhibition_id")
-    private Exhibition exhibition;
+
     @Builder
     public Detail(String attribute, String contents){
         this.attribute = attribute;
