@@ -9,13 +9,12 @@ import taba5.Artvis.domain.Detail;
 import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Exhibition.ExhibitionTag;
 import taba5.Artvis.domain.Exhibition.Tag;
+import taba5.Artvis.domain.Like.ExhibitionLike;
+import taba5.Artvis.domain.Member;
 import taba5.Artvis.dto.DetailDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
-import taba5.Artvis.repository.DetailRepository;
-import taba5.Artvis.repository.ExhibitionRepository;
-import taba5.Artvis.repository.ExhibitionTagRepository;
-import taba5.Artvis.repository.TagRepository;
+import taba5.Artvis.repository.*;
 
 import java.util.List;
 
@@ -27,6 +26,7 @@ public class ExhibitionService {
     private final ExhibitionTagRepository exhibitionTagRepository;
     private final TagRepository tagRepository;
     private final DetailRepository detailRepository;
+    private final ExhibitionLikeRepository exhibitionLikeRepository;
     public ExhibitionResponseDto createExhibition(ExhibitionRequestDto dto){
         dto.printDto();
         List<Detail> detailList = Detail.toEntityList(dto.getDetailList());
@@ -63,7 +63,10 @@ public class ExhibitionService {
                 .tagList(exhibitionTag.stream().map(ExhibitionTag::getTagName).toList())
                 .build();
     }
-
+    public List<ExhibitionResponseDto> getLikedExhibition(Long memberId){
+        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember(memberId);
+        return exhibitionLikes.stream().map((r)->getExhibitionResponseDto(r.getExhibition())).toList();
+    }
     public ExhibitionTag createExhibitionTag(Exhibition exhibition, Tag tag){
         ExhibitionTag exhibitionTag = ExhibitionTag.builder()
                 .exhibition(exhibition)

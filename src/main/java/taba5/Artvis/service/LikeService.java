@@ -4,10 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import taba5.Artvis.Exception.ErrorCode;
 import taba5.Artvis.Exception.RestApiException;
+import taba5.Artvis.domain.Art.Artwork;
 import taba5.Artvis.domain.Exhibition.Exhibition;
+import taba5.Artvis.domain.Like.ArtworkLike;
 import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
+import taba5.Artvis.dto.Like.ArtworkLikeDto;
 import taba5.Artvis.dto.Like.ExhibitionLikeDto;
+import taba5.Artvis.repository.ArtworkLikeRepository;
+import taba5.Artvis.repository.ArtworkRepository;
 import taba5.Artvis.repository.ExhibitionRepository;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
 import taba5.Artvis.repository.MemberRepository;
@@ -20,13 +25,15 @@ public class LikeService {
     private final ExhibitionLikeRepository exhibitionLikeRepository;
     private final MemberRepository memberRepository;
     private final ExhibitionRepository exhibitionRepository;
-    public ExhibitionLikeDto save(ExhibitionLikeDto exhibitionLikeDto){
-        if (exhibitionLikeDto.getExhibitionId() != null){
-            return saveExhibitionLike(exhibitionLikeDto);
-        }
-        else return null;
+    private final ArtworkRepository artworkRepository;
+    private final ArtworkLikeRepository artworkLikeRepository;
+    public ArtworkLikeDto saveArtworkLike(ArtworkLikeDto artworkLikeDto){
+        Member member = findMember(artworkLikeDto.getMemberId());
+        Artwork artwork = findArtwork(artworkLikeDto.getArtworkId());
+        ArtworkLike artworkLike = new ArtworkLike(member, artwork);
+        artworkLikeRepository.save(artworkLike);
+        return artworkLike.toDto();
     }
-
     public ExhibitionLikeDto saveExhibitionLike(ExhibitionLikeDto exhibitionLikeDto) {
         Member member = findMember(exhibitionLikeDto.getMemberId());
         Exhibition exhibition = findExhibition(exhibitionLikeDto.getExhibitionId());
@@ -47,4 +54,9 @@ public class LikeService {
         return exhibitionRepository.findById(exhibitionId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
     }
+    public Artwork findArtwork(Long artworkId){
+        return artworkRepository.findById(artworkId)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+    }
+
 }

@@ -14,6 +14,7 @@ public abstract class Like {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
 
     public Like(Member member) {

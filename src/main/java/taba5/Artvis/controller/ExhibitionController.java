@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.service.ExhibitionService;
+import taba5.Artvis.util.SecurityUtil;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,5 +22,9 @@ public class ExhibitionController {
     @GetMapping("/{id}")
     public ResponseEntity<ExhibitionResponseDto> getExhibition(@PathVariable Long id){
         return ResponseEntity.ok(exhibitionService.getExhibition(id));
+    }
+    @GetMapping("/liked")
+    public ResponseEntity<List<ExhibitionResponseDto>> likeExhibition(){
+        return ResponseEntity.ok(exhibitionService.getLikedExhibition(SecurityUtil.getCurrentMemberId()));
     }
 }

@@ -7,8 +7,12 @@ import taba5.Artvis.Exception.RestApiException;
 import taba5.Artvis.domain.Art.Artist;
 import taba5.Artvis.domain.Art.Artwork;
 import taba5.Artvis.domain.Detail;
-import taba5.Artvis.dto.ArtworkDto;
+import taba5.Artvis.domain.Exhibition.Exhibition;
+import taba5.Artvis.domain.Like.ArtworkLike;
+import taba5.Artvis.dto.Artwork.ArtworkDto;
+import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.repository.ArtistRepository;
+import taba5.Artvis.repository.ArtworkLikeRepository;
 import taba5.Artvis.repository.ArtworkRepository;
 import taba5.Artvis.repository.DetailRepository;
 
@@ -20,6 +24,7 @@ public class ArtworkService {
     private final ArtworkRepository artworkRepository;
     private final DetailRepository detailRepository;
     private final ArtistRepository artistRepository;
+    private final ArtworkLikeRepository artworkLikeRepository;
 
     public void saveArtwork(ArtworkDto artworkDto){
         List<Detail> detailList = Detail.toEntityList(artworkDto.getDetailList());
@@ -32,5 +37,24 @@ public class ArtworkService {
                 detailList
         );
         artworkRepository.save(artwork);
+    }
+    public ArtworkDto getArtwork(Long id){
+        Artwork artwork = artworkRepository.findById(id)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        return getArtworkResponseDto(artwork);
+    }
+    public ArtworkDto getArtworkResponseDto(Artwork artwork){
+        return ArtworkDto.builder()
+                .artwork_id(artwork.getId())
+                .title(artwork.getTitle())
+                .artist(artwork.getArtist().getName())
+                .detailList(artwork.getDetailList().stream()
+                        .map(Detail::toDto).toList())
+                .build();
+    }
+    public List<ArtworkDto> getLikedArtwork(Long memberId){
+        List<ArtworkLike> artworkLikeList = artworkLikeRepository.findByMember(memberId);
+        return artworkLikeList.stream()
+                .map(artworkLike -> getArtworkResponseDto(artworkLike.getArtwork())).toList();
     }
 }
