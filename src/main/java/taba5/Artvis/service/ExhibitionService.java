@@ -15,6 +15,7 @@ import taba5.Artvis.dto.DetailDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.repository.*;
+import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
 
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class ExhibitionService {
                 .build();
     }
     public List<ExhibitionResponseDto> getLikedExhibition(Long memberId){
-        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember(memberId);
+        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember_Id(memberId);
         return exhibitionLikes.stream().map((r)->getExhibitionResponseDto(r.getExhibition())).toList();
     }
     public ExhibitionTag createExhibitionTag(Exhibition exhibition, Tag tag){
@@ -81,8 +82,5 @@ public class ExhibitionService {
     }
     public List<ExhibitionTag> getExhibitionTagList(Exhibition exhibition){
         return exhibitionTagRepository.findByExhibition(exhibition);
-    }
-    public List<DetailDto> getDetailDtoList(Exhibition exhibition){
-        return detailRepository.findByExhibition(exhibition).stream().map(Detail::toDto).toList();
     }
 }

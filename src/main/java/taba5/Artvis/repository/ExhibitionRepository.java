@@ -6,5 +6,4 @@ import taba5.Artvis.domain.Exhibition.Exhibition;
 import java.util.List;
 
 public interface ExhibitionRepository extends JpaRepository<Exhibition, Long> {
-    List<Exhibition> findById(List<Exhibition> exhibitionList);
 }

@@ -7,6 +7,4 @@ import taba5.Artvis.domain.Exhibition.Exhibition;
 import java.util.Optional;
 
 public interface DetailRepository extends JpaRepository<Detail, Long> {
-
-    Optional<Detail> findByExhibition(Exhibition exhibition);
 }

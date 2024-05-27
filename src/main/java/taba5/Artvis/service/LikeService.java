@@ -11,7 +11,7 @@ import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
 import taba5.Artvis.dto.Like.ArtworkLikeDto;
 import taba5.Artvis.dto.Like.ExhibitionLikeDto;
-import taba5.Artvis.repository.ArtworkLikeRepository;
+import taba5.Artvis.repository.LikeRepository.ArtworkLikeRepository;
 import taba5.Artvis.repository.ArtworkRepository;
 import taba5.Artvis.repository.ExhibitionRepository;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
@@ -42,8 +42,7 @@ public class LikeService {
         return exhibitionLike.toDto();
     }
     public List<ExhibitionLikeDto> getExhibitionLikes(Long memberId){
-        Member member = findMember(memberId);
-        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember(member);
+        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember_Id(memberId);
         return exhibitionLikes.stream().map(ExhibitionLike::toDto).toList();
     }
     public Member findMember(Long memberId){

@@ -7,12 +7,10 @@ import taba5.Artvis.Exception.RestApiException;
 import taba5.Artvis.domain.Art.Artist;
 import taba5.Artvis.domain.Art.Artwork;
 import taba5.Artvis.domain.Detail;
-import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Like.ArtworkLike;
 import taba5.Artvis.dto.Artwork.ArtworkDto;
-import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.repository.ArtistRepository;
-import taba5.Artvis.repository.ArtworkLikeRepository;
+import taba5.Artvis.repository.LikeRepository.ArtworkLikeRepository;
 import taba5.Artvis.repository.ArtworkRepository;
 import taba5.Artvis.repository.DetailRepository;
 
@@ -53,7 +51,7 @@ public class ArtworkService {
                 .build();
     }
     public List<ArtworkDto> getLikedArtwork(Long memberId){
-        List<ArtworkLike> artworkLikeList = artworkLikeRepository.findByMember(memberId);
+        List<ArtworkLike> artworkLikeList = artworkLikeRepository.findByMember_Id(memberId);
         return artworkLikeList.stream()
                 .map(artworkLike -> getArtworkResponseDto(artworkLike.getArtwork())).toList();
     }
