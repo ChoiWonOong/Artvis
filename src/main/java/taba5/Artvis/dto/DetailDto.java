@@ -9,10 +9,7 @@ public class DetailDto {
     private String attribute;
     private String contents;
     public Detail toEntity(){
-        return Detail.builder()
-                .attribute(attribute)
-                .contents(contents)
-                .build();
+        return new Detail(attribute, contents);
     }
     @Builder
     public DetailDto(String attribute, String contents){

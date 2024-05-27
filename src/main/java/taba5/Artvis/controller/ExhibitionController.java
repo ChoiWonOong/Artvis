@@ -13,7 +13,7 @@ import taba5.Artvis.service.ExhibitionService;
 public class ExhibitionController {
     private final ExhibitionService exhibitionService;
     @PostMapping("/create")
-    public ResponseEntity<ExhibitionResponseDto> createExhibition(ExhibitionRequestDto exhibitionRequestDto){
+    public ResponseEntity<ExhibitionResponseDto> createExhibition(@RequestBody ExhibitionRequestDto exhibitionRequestDto){
         return ResponseEntity.ok(exhibitionService.createExhibition(exhibitionRequestDto));
     }
     @GetMapping("/{id}")

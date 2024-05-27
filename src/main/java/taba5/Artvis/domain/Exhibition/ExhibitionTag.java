@@ -1,4 +1,4 @@
-package taba5.Artvis.domain;
+package taba5.Artvis.domain.Exhibition;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class ExhibitionTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +24,8 @@ public class ExhibitionTag {
     public ExhibitionTag(Exhibition exhibition, Tag tag){
         this.exhibition = exhibition;
         this.tag = tag;
+    }
+    public String getTagName(){
+        return this.getTag().getTagName();
     }
 }

@@ -2,11 +2,11 @@ package taba5.Artvis.dto.Exhibition;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import taba5.Artvis.domain.Exhibition;
+import lombok.extern.slf4j.Slf4j;
 import taba5.Artvis.dto.DetailDto;
 
 import java.util.List;
-
+@Slf4j
 @AllArgsConstructor
 @Getter
 public class ExhibitionRequestDto {
@@ -16,12 +16,13 @@ public class ExhibitionRequestDto {
     private String endDate;
     private List<String> exhibitionTagList;
     private List<DetailDto> detailList;
-    public Exhibition toEntity(){
-        return Exhibition.builder()
-                .title(title)
-                .location(location)
-                .startDate(startDate)
-                .endDate(endDate)
-                .build();
+
+    public void printDto(){
+        log.info("title: {}", title);
+        log.info("location: {}", location);
+        log.info("startDate: {}", startDate);
+        log.info("endDate: {}", endDate);
+        log.info("exhibitionTagList: {}", exhibitionTagList);
+        log.info("detailList: {}", detailList);
     }
 }

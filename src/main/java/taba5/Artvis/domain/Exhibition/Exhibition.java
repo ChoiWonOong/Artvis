@@ -1,13 +1,13 @@
-package taba5.Artvis.domain;
+package taba5.Artvis.domain.Exhibition;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import taba5.Artvis.dto.DetailDto;
+import taba5.Artvis.domain.Detail;
+import taba5.Artvis.domain.Gallery;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,31 +21,28 @@ public class Exhibition {
     private String location;
     private String startDate;
     private String endDate;
-    @Setter
-    @OneToMany(mappedBy = "exhibition")
-    private List<ExhibitionTag> exhibitionTagList;
+    @ManyToOne
+    @JoinColumn(name = "gallery_id")
+    private Gallery gallery;
+
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "details")
-    private List<Detail> detailList;
-    @Builder
-    public Exhibition(String title, String location, String startDate, String endDate, List<ExhibitionTag> exhibitionTagList, List<DetailDto> detailList){
+    private List<Detail> detailList = new ArrayList<>();
+
+    public Exhibition(String title, String location, String startDate, String endDate, List<Detail> detailList) {
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.exhibitionTagList = exhibitionTagList;
-        this.detailList = detailList.stream().map(DetailDto::toEntity).toList();
+        this.detailList = detailList;
     }
-    public void setDetailList(List<DetailDto> detailList){
-        this.detailList = detailList.stream().map(DetailDto::toEntity).toList();
-    }
+
     public ExhibitionResponseDto toResponseDto(){
         return ExhibitionResponseDto.builder()
                 .title(title)
                 .location(location)
                 .startDate(startDate)
                 .endDate(endDate)
-                .tagList(exhibitionTagList.stream().map(ExhibitionTag::getTag).map(Tag::getTagName).toList())
                 .detailList(detailList.stream().map(Detail::toDto).toList())
                 .build();
     }

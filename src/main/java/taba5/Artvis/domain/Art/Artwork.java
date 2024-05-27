@@ -1,7 +1,8 @@
-package taba5.Artvis.domain;
+package taba5.Artvis.domain.Art;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import taba5.Artvis.domain.Detail;
 
 import java.util.List;
 
