@@ -1,7 +1,8 @@
 package taba5.Artvis.dto.Image;
 
-import java.util.List;
-
+import lombok.Setter;
+@Setter
 public class ImageResponseDto {
-    private List<String> imageUrls;
+    private String imageUrls;
+
 }

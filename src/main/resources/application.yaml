@@ -40,5 +40,5 @@ spring:
 spring:
   servlet:
     multipart:
-      max-file-size: 5MB
+      max-file-size: 64MB
       location: c:\\Artvis\\Image

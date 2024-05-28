@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import taba5.Artvis.domain.Detail;
 import taba5.Artvis.domain.Gallery;
+import taba5.Artvis.domain.Image;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 
 import java.util.ArrayList;
@@ -28,6 +29,10 @@ public class Exhibition {
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "details")
     private List<Detail> detailList = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     public Exhibition(String title, String location, String startDate, String endDate, List<Detail> detailList) {
         this.title = title;

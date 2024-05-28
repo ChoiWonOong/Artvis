@@ -4,12 +4,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import taba5.Artvis.dto.DetailDto;
+import taba5.Artvis.dto.Image.ImageResponseDto;
 
 import java.util.List;
 
 @Getter
 @Setter
-public class ExhibitionResponseDto {
+public class ExhibitionResponseDto extends ImageResponseDto {
     private Long id;
     private String title;
     private String location;
@@ -26,5 +27,8 @@ public class ExhibitionResponseDto {
         this.endDate = endDate;
         this.tagList = tagList;
         this.detailList = detailList;
+    }
+    public void setImageUrl(String imageUrl){
+        super.setImageUrls(imageUrl);
     }
 }
