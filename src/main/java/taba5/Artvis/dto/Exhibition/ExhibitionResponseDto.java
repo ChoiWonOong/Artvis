@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import taba5.Artvis.dto.DetailDto;
 import taba5.Artvis.dto.Image.ImageResponseDto;
+import taba5.Artvis.dto.ReviewDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,6 +20,9 @@ public class ExhibitionResponseDto extends ImageResponseDto {
     private String endDate;
     private List<String> tagList;
     private List<DetailDto> detailList;
+    @Setter
+    private Boolean isLiked;
+    private List<ReviewDto> reviewList = new ArrayList<>();
     @Builder
     public ExhibitionResponseDto(Long id, String title, String location, String startDate, String endDate, List<String> tagList, List<DetailDto> detailList){
         this.id = id;
@@ -31,4 +36,5 @@ public class ExhibitionResponseDto extends ImageResponseDto {
     public void setImageUrl(String imageUrl){
         super.setImageUrls(imageUrl);
     }
+
 }

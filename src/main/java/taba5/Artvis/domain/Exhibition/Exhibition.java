@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import taba5.Artvis.domain.Detail;
 import taba5.Artvis.domain.Gallery;
 import taba5.Artvis.domain.Image;
+import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 
 import java.util.ArrayList;
@@ -34,6 +35,10 @@ public class Exhibition {
     @JoinColumn(name = "image_id")
     private Image image;
 
+    @OneToOne
+    @JoinColumn(name = "thumbnail_id")
+    private Image thumbnail;
+
     public Exhibition(String title, String location, String startDate, String endDate, List<Detail> detailList) {
         this.title = title;
         this.location = location;
@@ -49,6 +54,14 @@ public class Exhibition {
                 .startDate(startDate)
                 .endDate(endDate)
                 .detailList(detailList.stream().map(Detail::toDto).toList())
+                .build();
+    }
+    public ExhibitionHistoryDto toHistoryDto(){
+        return ExhibitionHistoryDto.builder()
+                .title(title)
+                .galleryName(gallery.getName())
+                .startDate(startDate)
+                .endDate(endDate)
                 .build();
     }
 }

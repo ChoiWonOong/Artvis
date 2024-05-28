@@ -11,11 +11,13 @@ import taba5.Artvis.domain.Exhibition.ExhibitionTag;
 import taba5.Artvis.domain.Exhibition.Tag;
 import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
-import taba5.Artvis.dto.DetailDto;
+import taba5.Artvis.domain.Review;
+import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.repository.*;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
+import taba5.Artvis.util.SecurityUtil;
 
 import java.util.List;
 
@@ -28,6 +30,9 @@ public class ExhibitionService {
     private final TagRepository tagRepository;
     private final DetailRepository detailRepository;
     private final ExhibitionLikeRepository exhibitionLikeRepository;
+    private final ReviewRepository reviewRepository;
+    private final MemberRepository memberRepository;
+
     public ExhibitionResponseDto createExhibition(ExhibitionRequestDto dto){
         dto.printDto();
         List<Detail> detailList = Detail.toEntityList(dto.getDetailList());
@@ -44,17 +49,18 @@ public class ExhibitionService {
                     .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
             createExhibitionTag(exhibition, tag);
         }
-        return getExhibitionResponseDto(exhibition);
+        return getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), exhibition);
     }
-    public ExhibitionResponseDto getExhibition(Long id){
-        Exhibition exhibition = exhibitionRepository.findById(id)
+    public ExhibitionResponseDto getExhibition(Long memberId, Long exhibitionId){
+        Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        return getExhibitionResponseDto(exhibition);
+        return getExhibitionResponseDto(memberId, exhibition);
     }
 
-    private ExhibitionResponseDto getExhibitionResponseDto(Exhibition exhibition) {
+    private ExhibitionResponseDto getExhibitionResponseDto(Long memberId, Exhibition exhibition) {
         List<ExhibitionTag> exhibitionTag = exhibitionTagRepository.findByExhibition(exhibition);
-        return ExhibitionResponseDto.builder()
+
+        ExhibitionResponseDto dto = ExhibitionResponseDto.builder()
                 .id(exhibition.getId())
                 .title(exhibition.getTitle())
                 .location(exhibition.getLocation())
@@ -63,10 +69,15 @@ public class ExhibitionService {
                 .detailList(exhibition.getDetailList().stream().map(Detail::toDto).toList())
                 .tagList(exhibitionTag.stream().map(ExhibitionTag::getTagName).toList())
                 .build();
+        dto.setIsLiked(exhibitionLikeRepository.existsByMember_IdAndExhibition_Id(memberId, exhibition.getId()));
+        reviewRepository.findAllByExhibition(exhibition).stream()
+                .map(Review::toDto)
+                .forEach(dto.getReviewList()::add);
+        return dto;
     }
     public List<ExhibitionResponseDto> getLikedExhibition(Long memberId){
         List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember_Id(memberId);
-        return exhibitionLikes.stream().map((r)->getExhibitionResponseDto(r.getExhibition())).toList();
+        return exhibitionLikes.stream().map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r.getExhibition())).toList();
     }
     public ExhibitionTag createExhibitionTag(Exhibition exhibition, Tag tag){
         ExhibitionTag exhibitionTag = ExhibitionTag.builder()
@@ -82,5 +93,21 @@ public class ExhibitionService {
     }
     public List<ExhibitionTag> getExhibitionTagList(Exhibition exhibition){
         return exhibitionTagRepository.findByExhibition(exhibition);
+    }
+
+    public ExhibitionHistoryDto addHistory(Long id) {
+        Exhibition exhibition = exhibitionRepository.findById(id)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId())
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        member.addHistory(exhibition);
+        return ExhibitionHistoryDto.builder()
+                .exhibitionId(exhibition.getId())
+                .title(exhibition.getTitle())
+                .startDate(exhibition.getStartDate())
+                .endDate(exhibition.getEndDate())
+                .galleryName(exhibition.getLocation())
+                .imageUrl(exhibition.getImage().getUrl())
+                .build();
     }
 }

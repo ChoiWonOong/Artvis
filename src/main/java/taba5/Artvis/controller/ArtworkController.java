@@ -20,7 +20,7 @@ public class ArtworkController {
     }
     @GetMapping("/{id}")
     public ArtworkDto getArtwork(@PathVariable Long id){
-        return artworkService.getArtwork(id);
+        return artworkService.getArtwork(SecurityUtil.getCurrentMemberId(), id);
     }
     @GetMapping("/liked")
     public List<ArtworkDto> likedArtwork(){

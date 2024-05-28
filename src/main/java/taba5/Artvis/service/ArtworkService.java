@@ -13,6 +13,7 @@ import taba5.Artvis.repository.ArtistRepository;
 import taba5.Artvis.repository.LikeRepository.ArtworkLikeRepository;
 import taba5.Artvis.repository.ArtworkRepository;
 import taba5.Artvis.repository.DetailRepository;
+import taba5.Artvis.util.SecurityUtil;
 
 import java.util.List;
 
@@ -36,23 +37,25 @@ public class ArtworkService {
         );
         artworkRepository.save(artwork);
     }
-    public ArtworkDto getArtwork(Long id){
-        Artwork artwork = artworkRepository.findById(id)
+    public ArtworkDto getArtwork(Long memberId, Long artworkId){
+        Artwork artwork = artworkRepository.findById(artworkId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        return getArtworkResponseDto(artwork);
+        return getArtworkResponseDto(memberId, artwork);
     }
-    public ArtworkDto getArtworkResponseDto(Artwork artwork){
-        return ArtworkDto.builder()
+    public ArtworkDto getArtworkResponseDto(Long memberId, Artwork artwork){
+        ArtworkDto dto = ArtworkDto.builder()
                 .artwork_id(artwork.getId())
                 .title(artwork.getTitle())
                 .artist(artwork.getArtist().getName())
                 .detailList(artwork.getDetailList().stream()
                         .map(Detail::toDto).toList())
                 .build();
+        dto.setIsLiked(artworkLikeRepository.existsByMember_IdAndArtwork_Id(memberId, artwork.getId()));
+        return dto;
     }
     public List<ArtworkDto> getLikedArtwork(Long memberId){
         List<ArtworkLike> artworkLikeList = artworkLikeRepository.findByMember_Id(memberId);
         return artworkLikeList.stream()
-                .map(artworkLike -> getArtworkResponseDto(artworkLike.getArtwork())).toList();
+                .map(artworkLike -> getArtworkResponseDto(SecurityUtil.getCurrentMemberId(), artworkLike.getArtwork())).toList();
     }
 }

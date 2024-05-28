@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ArtworkLikeRepository extends JpaRepository<ArtworkLike, Long>{
     List<ArtworkLike> findByMember_Id(Long memberId);
+    Boolean existsByMember_IdAndArtwork_Id(Long memberId, Long artworkId);
 }

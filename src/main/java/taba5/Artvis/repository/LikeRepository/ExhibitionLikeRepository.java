@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ExhibitionLikeRepository extends JpaRepository<ExhibitionLike, Long>{
     List<ExhibitionLike> findByMember_Id(Long member);
+    Boolean existsByMember_IdAndExhibition_Id(Long memberId, Long exhibitionId);
 }

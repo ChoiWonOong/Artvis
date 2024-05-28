@@ -3,6 +3,7 @@ package taba5.Artvis.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.service.ExhibitionService;
@@ -26,5 +27,9 @@ public class ExhibitionController {
     @GetMapping("/liked")
     public ResponseEntity<List<ExhibitionResponseDto>> likeExhibition(){
         return ResponseEntity.ok(exhibitionService.getLikedExhibition(SecurityUtil.getCurrentMemberId()));
+    }
+    @PostMapping("/add/history/{id}")
+    public ResponseEntity<ExhibitionHistoryDto> addHistory(@PathVariable Long id){
+        return ResponseEntity.ok(exhibitionService.addHistory(id));
     }
 }
