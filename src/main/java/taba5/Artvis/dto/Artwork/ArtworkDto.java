@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import taba5.Artvis.dto.DetailDto;
+import taba5.Artvis.dto.Image.ImageResponseDto;
 
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class ArtworkDto {
+public class ArtworkDto extends ImageResponseDto {
     private Long artwork_id;
     private String title;
     private String artist;

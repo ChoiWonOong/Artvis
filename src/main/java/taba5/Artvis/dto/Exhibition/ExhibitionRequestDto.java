@@ -16,6 +16,7 @@ public class ExhibitionRequestDto {
     private String endDate;
     private List<String> exhibitionTagList;
     private List<DetailDto> detailList;
+    private String imageUrl;
 
     public void printDto(){
         log.info("title: {}", title);

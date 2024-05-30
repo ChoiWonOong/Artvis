@@ -4,5 +4,4 @@ import lombok.Setter;
 @Setter
 public class ImageResponseDto {
     private String imageUrls;
-
 }

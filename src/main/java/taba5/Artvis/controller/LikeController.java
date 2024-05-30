@@ -1,12 +1,10 @@
 package taba5.Artvis.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import taba5.Artvis.dto.Like.ArtworkLikeDto;
 import taba5.Artvis.dto.Like.ExhibitionLikeDto;
 import taba5.Artvis.service.LikeService;
+import taba5.Artvis.util.SecurityUtil;
 
 import java.util.List;
 
@@ -19,13 +17,13 @@ public class LikeController {
         this.likeService = likeService;
     }
 
-    @PostMapping("/exhibition")
-    public ExhibitionLikeDto saveExhibitionLike(ExhibitionLikeDto exhibitionLikeDto){
-        return likeService.saveExhibitionLike(exhibitionLikeDto);
+    @GetMapping("/exhibition/{id}")
+    public ExhibitionLikeDto saveExhibitionLike(@PathVariable Long id){
+        return likeService.saveExhibitionLike(SecurityUtil.getCurrentMemberId(), id);
     }
-    @PostMapping("/artwork")
-    public ArtworkLikeDto saveArtworkLike(ArtworkLikeDto exhibitionLikeDto){
-        return likeService.saveArtworkLike(exhibitionLikeDto);
+    @PostMapping("/artwork/{id}")
+    public ArtworkLikeDto saveArtworkLike(@PathVariable Long id){
+        return likeService.saveArtworkLike(SecurityUtil.getCurrentMemberId(), id);
     }
     @GetMapping("/get/exhibition")
     public List<ExhibitionLikeDto> getExhibitionLikeList(Long memberId){

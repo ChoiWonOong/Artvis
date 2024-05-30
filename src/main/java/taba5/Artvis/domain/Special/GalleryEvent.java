@@ -1,4 +1,4 @@
-package taba5.Artvis.domain.Event;
+package taba5.Artvis.domain.Special;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class GalleryProgram  extends GallerySpecial {
+public class GalleryEvent extends GallerySpecial{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

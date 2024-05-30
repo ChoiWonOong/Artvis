@@ -1,4 +1,4 @@
-package taba5.Artvis.domain.Event;
+package taba5.Artvis.domain.Special;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;

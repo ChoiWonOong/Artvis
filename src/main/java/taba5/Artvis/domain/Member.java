@@ -25,6 +25,7 @@ public class Member extends BaseEntity{
     @Column(name ="member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String username;
 
@@ -40,8 +41,9 @@ public class Member extends BaseEntity{
     private Authority authority;
 
     @OneToMany
-    @JoinColumn
+    @JoinColumn(name = "history_id")
     private List<Exhibition> history = new ArrayList<>();
+
     @Builder
     public Member(String username, String password, String nickname, Authority authority){
         this.username = username;
@@ -60,16 +62,14 @@ public class Member extends BaseEntity{
                 Collections.singleton(grantedAuthority)
         );
     }
-    public Member passwordReassign(String password){
+    public void passwordReassign(String password){
         this.password = password;
-        return this;
     }
     public MyPageDto MemberToMyPageDto(){
         return new MyPageDto(this.username, this.nickname);
     }
-    public Long addHistory(Exhibition exhibition){
+    public void addHistory(Exhibition exhibition){
         this.history.add(exhibition);
-        return exhibition.getId();
     }
     public HistoryDto getHistory(){
         HistoryDto historyDto = new HistoryDto();

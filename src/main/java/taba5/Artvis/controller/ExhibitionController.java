@@ -22,7 +22,7 @@ public class ExhibitionController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<ExhibitionResponseDto> getExhibition(@PathVariable Long id){
-        return ResponseEntity.ok(exhibitionService.getExhibition(id));
+        return ResponseEntity.ok(exhibitionService.getExhibition(SecurityUtil.getCurrentMemberId(), id));
     }
     @GetMapping("/liked")
     public ResponseEntity<List<ExhibitionResponseDto>> likeExhibition(){
@@ -31,5 +31,9 @@ public class ExhibitionController {
     @PostMapping("/add/history/{id}")
     public ResponseEntity<ExhibitionHistoryDto> addHistory(@PathVariable Long id){
         return ResponseEntity.ok(exhibitionService.addHistory(id));
+    }
+    @GetMapping("/list")
+    public ResponseEntity<List<ExhibitionResponseDto>> getExhibitionList(){
+        return ResponseEntity.ok(exhibitionService.getExhibitionList());
     }
 }

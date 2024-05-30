@@ -79,13 +79,12 @@ public class ExhibitionService {
         List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember_Id(memberId);
         return exhibitionLikes.stream().map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r.getExhibition())).toList();
     }
-    public ExhibitionTag createExhibitionTag(Exhibition exhibition, Tag tag){
+    public void createExhibitionTag(Exhibition exhibition, Tag tag){
         ExhibitionTag exhibitionTag = ExhibitionTag.builder()
                 .exhibition(exhibition)
                 .tag(tag)
                 .build();
         exhibitionTagRepository.save(exhibitionTag);
-        return exhibitionTag;
     }
     public ExhibitionTag getExhibitionTag(Long id){
         return exhibitionTagRepository.findById(id)
@@ -109,5 +108,11 @@ public class ExhibitionService {
                 .galleryName(exhibition.getLocation())
                 .imageUrl(exhibition.getImage().getUrl())
                 .build();
+    }
+
+    public List<ExhibitionResponseDto> getExhibitionList() {
+        return exhibitionRepository.findAll().stream()
+                .map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r))
+                .toList();
     }
 }

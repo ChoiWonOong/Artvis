@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import taba5.Artvis.domain.Detail;
 import taba5.Artvis.domain.Image;
 
@@ -26,6 +27,7 @@ public class Artwork {
     @JoinColumn(name = "details")
     private List<Detail> detailList;
 
+    @Setter
     @OneToOne
     @JoinColumn(name = "image_id")
     private Image image;

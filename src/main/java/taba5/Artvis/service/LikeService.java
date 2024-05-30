@@ -27,16 +27,16 @@ public class LikeService {
     private final ExhibitionRepository exhibitionRepository;
     private final ArtworkRepository artworkRepository;
     private final ArtworkLikeRepository artworkLikeRepository;
-    public ArtworkLikeDto saveArtworkLike(ArtworkLikeDto artworkLikeDto){
-        Member member = findMember(artworkLikeDto.getMemberId());
-        Artwork artwork = findArtwork(artworkLikeDto.getArtworkId());
+    public ArtworkLikeDto saveArtworkLike(Long memberId, Long artworkId){
+        Member member = findMember(memberId);
+        Artwork artwork = findArtwork(artworkId);
         ArtworkLike artworkLike = new ArtworkLike(member, artwork);
         artworkLikeRepository.save(artworkLike);
         return artworkLike.toDto();
     }
-    public ExhibitionLikeDto saveExhibitionLike(ExhibitionLikeDto exhibitionLikeDto) {
-        Member member = findMember(exhibitionLikeDto.getMemberId());
-        Exhibition exhibition = findExhibition(exhibitionLikeDto.getExhibitionId());
+    public ExhibitionLikeDto saveExhibitionLike(Long memberId, Long exhibitionId) {
+        Member member = findMember(memberId);
+        Exhibition exhibition = findExhibition(exhibitionId);
         ExhibitionLike exhibitionLike = new ExhibitionLike(member, exhibition);
         exhibitionLikeRepository.save(exhibitionLike);
         return exhibitionLike.toDto();

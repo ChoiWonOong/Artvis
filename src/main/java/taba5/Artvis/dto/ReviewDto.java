@@ -11,16 +11,16 @@ public class ReviewDto {
     private Long memberId;
     private Long exhibitionId;
     private String title;
-    private String content;
+    private String contents;
     private byte rating;
 
     @Builder
-    public ReviewDto(Long id, Long memberId, Long exhibitionId, String title, String content, byte rating) {
+    public ReviewDto(Long id, Long memberId, Long exhibitionId, String title, String contents, byte rating) {
         this.id = id;
         this.memberId = memberId;
         this.exhibitionId = exhibitionId;
         this.title = title;
-        this.content = content;
+        this.contents = contents;
         this.rating = rating;
     }
 }

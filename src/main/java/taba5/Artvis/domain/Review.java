@@ -36,7 +36,7 @@ public class Review {
                 .memberId(member.getId())
                 .exhibitionId(exhibition.getId())
                 .title(title)
-                .content(contents)
+                .contents(contents)
                 .rating(rating)
                 .build();
     }
