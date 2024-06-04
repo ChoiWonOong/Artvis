@@ -1,9 +1,11 @@
 package taba5.Artvis.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.dto.DetailDto;
 
 import java.util.List;
