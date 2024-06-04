@@ -1,6 +1,8 @@
 package taba5.Artvis.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import taba5.Artvis.Exception.ErrorCode;
 import taba5.Artvis.Exception.RestApiException;
@@ -16,7 +18,7 @@ import taba5.Artvis.repository.DetailRepository;
 import taba5.Artvis.util.SecurityUtil;
 
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArtworkService {
@@ -25,16 +27,17 @@ public class ArtworkService {
     private final ArtistRepository artistRepository;
     private final ArtworkLikeRepository artworkLikeRepository;
 
+    @Transactional
     public void saveArtwork(ArtworkDto artworkDto){
-        List<Detail> detailList = Detail.toEntityList(artworkDto.getDetailList());
-        detailRepository.saveAll(detailList);
-        Artist artist = artistRepository.findByName(artworkDto.getArtist())
+        List<Detail> details = detailRepository.saveAll(Detail.toEntityList(artworkDto.getDetail()));
+        Artist artist = artistRepository.findByName(artworkDto.getArtistName())
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
         Artwork artwork = new Artwork(
                 artworkDto.getTitle(),
                 artist,
-                detailList
+                details
         );
+        log.info("artworkName: {}", artwork.getArtist().getName());
         artworkRepository.save(artwork);
     }
     public ArtworkDto getArtwork(Long memberId, Long artworkId){
@@ -43,13 +46,7 @@ public class ArtworkService {
         return getArtworkResponseDto(memberId, artwork);
     }
     public ArtworkDto getArtworkResponseDto(Long memberId, Artwork artwork){
-        ArtworkDto dto = ArtworkDto.builder()
-                .artwork_id(artwork.getId())
-                .title(artwork.getTitle())
-                .artist(artwork.getArtist().getName())
-                .detailList(artwork.getDetailList().stream()
-                        .map(Detail::toDto).toList())
-                .build();
+        ArtworkDto dto = artwork.toDto();
         dto.setIsLiked(artworkLikeRepository.existsByMember_IdAndArtwork_Id(memberId, artwork.getId()));
         return dto;
     }

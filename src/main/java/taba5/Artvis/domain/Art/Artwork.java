@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import taba5.Artvis.domain.Detail;
 import taba5.Artvis.domain.Image;
+import taba5.Artvis.dto.Artwork.ArtworkDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,13 +21,13 @@ public class Artwork {
     private Long id;
     private String title;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     private Artist artist;
 
     @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "details")
-    private List<Detail> detailList;
+    @JoinColumn(name = "artwork_id")
+    private List<Detail> detailList = new ArrayList<>();
 
     @Setter
     @OneToOne
@@ -37,5 +39,14 @@ public class Artwork {
         this.title = title;
         this.artist = artist;
         this.detailList = detailList;
+    }
+
+    public ArtworkDto toDto() {
+        return ArtworkDto.builder()
+                .id(id)
+                .title(title)
+                .artistName(artist.getName())
+                .detail(detailList.stream().map(Detail::toDto).toList())
+                .build();
     }
 }
