@@ -19,12 +19,14 @@ public class MemberService {
         Member member = getMe();
         return member.MemberToMyPageDto();
     }
-    private Member getMe(){
-        return memberRepository.findById(SecurityUtil.getCurrentMemberId())
-                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+    public Member getMe(){
+        return getMember(SecurityUtil.getCurrentMemberId());
     }
     public HistoryDto getHistory(Long memberId){
         Member member = memberRepository.findById(memberId).orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        return member.getHistory();
+        return member.getHistoryDto();
+    }
+    public Member getMember(Long memberId){
+        return memberRepository.findById(memberId).orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
     }
 }

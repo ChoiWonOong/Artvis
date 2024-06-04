@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -40,6 +41,12 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
+    @Getter
+    @Setter
+    @OneToMany
+    @JoinColumn(name = "recommend")
+    private List<Exhibition> recommend = new ArrayList<>();
+    @Getter
     @OneToMany
     @JoinColumn(name = "history_id")
     private List<Exhibition> history = new ArrayList<>();
@@ -71,7 +78,7 @@ public class Member extends BaseEntity{
     public void addHistory(Exhibition exhibition){
         this.history.add(exhibition);
     }
-    public HistoryDto getHistory(){
+    public HistoryDto getHistoryDto(){
         HistoryDto historyDto = new HistoryDto();
         historyDto.setHistory(history.stream().map(Exhibition::toHistoryDto).toList());
         return historyDto;
