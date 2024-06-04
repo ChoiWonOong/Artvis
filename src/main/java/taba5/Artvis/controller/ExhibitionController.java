@@ -34,6 +34,22 @@ public class ExhibitionController {
     }
     @GetMapping("/list")
     public ResponseEntity<List<ExhibitionResponseDto>> getExhibitionList(){
-        return ResponseEntity.ok(exhibitionService.getExhibitionList());
+        return ResponseEntity.ok(exhibitionService.getExhibitionDtoList());
+    }
+    @GetMapping("/list/recommend")
+    public ResponseEntity<List<ExhibitionResponseDto>> getRecommendExhibitionList(){
+        return ResponseEntity.ok(exhibitionService.getRecommendExhibitionList(SecurityUtil.getCurrentMemberId()));
+    }
+    @GetMapping("/list/{tagName}")
+    public ResponseEntity<List<ExhibitionResponseDto>> getExhibitionListByTagName(@PathVariable String tagName){
+        return ResponseEntity.ok(exhibitionService.getExhibitionListByTagName(tagName));
+    }
+    @GetMapping("search/{keyword}")
+    public ResponseEntity<List<ExhibitionResponseDto>> searchExhibition(@PathVariable String keyword){
+        return ResponseEntity.ok(exhibitionService.searchExhibition(keyword));
+    }
+    @PostMapping("/set/recommend")
+    public ResponseEntity<List<ExhibitionResponseDto>> setRecommend(Long id, List<Long> exhibitionIdList){
+        return ResponseEntity.ok(exhibitionService.setRecommend(id, exhibitionIdList));
     }
 }

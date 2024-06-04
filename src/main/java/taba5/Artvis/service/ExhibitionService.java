@@ -19,6 +19,7 @@ import taba5.Artvis.repository.*;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
 import taba5.Artvis.util.SecurityUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -76,7 +77,8 @@ public class ExhibitionService {
         return dto;
     }
     public List<ExhibitionResponseDto> getLikedExhibition(Long memberId){
-        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember_Id(memberId);
+        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
+        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember(member);
         return exhibitionLikes.stream().map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r.getExhibition())).toList();
     }
     public void createExhibitionTag(Exhibition exhibition, Tag tag){
@@ -109,10 +111,51 @@ public class ExhibitionService {
                 .imageUrl(exhibition.getImage().getUrl())
                 .build();
     }
-
-    public List<ExhibitionResponseDto> getExhibitionList() {
+    public List<Exhibition> getExhibitionList(){
+        return exhibitionRepository.findAll();
+    }
+    public List<ExhibitionResponseDto> getExhibitionDtoList() {
         return exhibitionRepository.findAll().stream()
                 .map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r))
                 .toList();
+    }
+
+    public List<ExhibitionResponseDto> getExhibitionListByTagName(String tagName) {
+        Tag tag = tagRepository.findByTagName(tagName)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        List<ExhibitionTag> exhibitionTagList = exhibitionTagRepository.findByTag(tag);
+        return exhibitionTagList.stream()
+                .map(ExhibitionTag::getExhibition)
+                .map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r))
+                .toList();
+    }
+
+    public List<ExhibitionResponseDto> searchExhibition(String keyword) {
+        return exhibitionRepository.findByTitleContaining(keyword).stream()
+                .map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), (Exhibition) r))
+                .toList();
+    }
+
+    public List<ExhibitionResponseDto> getRecommendExhibitionList(Long currentMemberId) {
+        Member member = memberRepository.findById(currentMemberId)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        List<Exhibition> recommendList = member.getRecommend();
+        return recommendList.stream()
+                .map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r))
+                .toList();
+    }
+
+    public List<ExhibitionResponseDto> setRecommend(Long id, List<Long> exhibitionIdList) {
+        Exhibition exhibition = exhibitionRepository.findById(id)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        exhibition.initializeRecommend();
+        List<ExhibitionResponseDto> result = new ArrayList<>();
+        for(Long exhibitionId : exhibitionIdList){
+            Exhibition recommendExhibition = exhibitionRepository.findById(exhibitionId)
+                    .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+            exhibition.addRecommend(recommendExhibition);
+            result.add(getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), recommendExhibition));
+        }
+        return result;
     }
 }

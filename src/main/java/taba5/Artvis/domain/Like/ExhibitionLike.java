@@ -10,15 +10,15 @@ import taba5.Artvis.dto.Like.ExhibitionLikeDto;
 @Entity
 @NoArgsConstructor
 @Getter
+@IdClass(LikeId.class)
 public class ExhibitionLike{
+    @ManyToOne
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Member member;
 
     @ManyToOne
-    private Member member;
-    @ManyToOne
     @JoinColumn(name = "exhibition_id")
+    @Id
     private Exhibition exhibition;
 
     public ExhibitionLike(Member member, Exhibition exhibition) {
@@ -27,11 +27,5 @@ public class ExhibitionLike{
     }
     public ExhibitionLikeDto toDto() {
         return new ExhibitionLikeDto(getMember().getId(), this.getExhibition().getId());
-    }
-    public Exhibition getExhibition() {
-        return exhibition;
-    }
-    public Member getMember() {
-        return member;
     }
 }

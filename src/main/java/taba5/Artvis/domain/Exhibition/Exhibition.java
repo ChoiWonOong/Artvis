@@ -29,7 +29,7 @@ public class Exhibition extends BaseEntity {
     private Gallery gallery;
 
     @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "details")
+    @JoinColumn(name = "exhibition_id")
     private List<Detail> detailList = new ArrayList<>();
 
     @Setter
@@ -40,6 +40,10 @@ public class Exhibition extends BaseEntity {
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "history")
     private List<Exhibition> historyList = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "recommend")
+    private List<Exhibition> recommendList;
 
     public Exhibition(String title, String location, String startDate, String endDate, List<Detail> detailList) {
         this.title = title;
@@ -65,5 +69,11 @@ public class Exhibition extends BaseEntity {
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
+    }
+    public void addRecommend(Exhibition exhibition){
+        recommendList.add(exhibition);
+    }
+    public void initializeRecommend(){
+        recommendList = new ArrayList<>();
     }
 }
