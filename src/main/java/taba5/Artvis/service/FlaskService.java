@@ -9,7 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import taba5.Artvis.dto.FlaskDto;
+import taba5.Artvis.dto.flask.ExhibitionContentsRequestDto;
+import taba5.Artvis.dto.flask.RatingRequestDto;
+import taba5.Artvis.dto.flask.FlaskRequestDto;
+import taba5.Artvis.dto.flask.FlaskResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -17,25 +20,26 @@ public class FlaskService {
 
     //데이터를 JSON 객체로 변환하기 위해서 사용
     private final ObjectMapper objectMapper;
+    private final String FlaskURL ="http://25.13.126.193:8080";
 
     @Transactional
-    public String checkBadWords(FlaskDto dto) throws JsonProcessingException {
+    public FlaskResponseDto getCollaborative(RatingRequestDto dto) throws JsonProcessingException {
+        return getFlaskResponseDto(objectMapper.writeValueAsString(dto), dto);
+    }
+    @Transactional
+    public FlaskResponseDto getContentsBased(ExhibitionContentsRequestDto dto) throws JsonProcessingException {
+        return getFlaskResponseDto(objectMapper.writeValueAsString(dto), dto);
+    }
+
+    private FlaskResponseDto getFlaskResponseDto(String s, FlaskRequestDto dto) {
         RestTemplate restTemplate = new RestTemplate();
-
-        //헤더를 JSON으로 설정함
         HttpHeaders headers = new HttpHeaders();
-
-        //파라미터로 들어온 dto를 JSON 객체로 변환
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String param = objectMapper.writeValueAsString(dto);
+        HttpEntity<String> entity = new HttpEntity<String>(s, headers);
+        String url = FlaskURL + "/" ;
 
-        HttpEntity<String> entity = new HttpEntity<String>(param , headers);
-
-        //실제 Flask 서버랑 연결하기 위한 URL
-        String url = "http://";
-
-        //Flask 서버로 데이터를 전송하고 받은 응답 값을 return
-        return restTemplate.postForObject(url, entity, String.class);
+        return restTemplate.postForObject(url, entity, FlaskResponseDto.class);
     }
+
 }
