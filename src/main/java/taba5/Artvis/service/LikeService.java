@@ -42,7 +42,8 @@ public class LikeService {
         return exhibitionLike.toDto();
     }
     public List<ExhibitionLikeDto> getExhibitionLikes(Long memberId){
-        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember_Id(memberId);
+        Member member = findMember(memberId);
+        List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember(member);
         return exhibitionLikes.stream().map(ExhibitionLike::toDto).toList();
     }
     public Member findMember(Long memberId){
