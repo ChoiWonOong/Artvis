@@ -25,6 +25,6 @@ public class ReviewController {
     }
     @GetMapping("/my")
     public ResponseEntity<List<ReviewDto>> getMyReview(){
-        return ResponseEntity.ok(reviewService.getMemberReview(SecurityUtil.getCurrentMemberId()));
+        return ResponseEntity.ok(reviewService.getMemberReviewDto(SecurityUtil.getCurrentMemberId()));
     }
 }

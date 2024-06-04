@@ -36,11 +36,22 @@ public class ReviewService {
         List<Review> reviewList = reviewRepository.findAllByExhibition(exhibition);
         return reviewList.stream().map(Review::toDto).toList();
     }
-
-    public List<ReviewDto> getMemberReview(Long memberId) {
+    public int getExhibitionReviewCount(Exhibition exhibition) {
+        return reviewRepository.countByExhibition(exhibition);
+    }
+    public int getExhibitionReviewAvg(Exhibition exhibition) {
+        return reviewRepository.avgRatingByExhibition(exhibition);
+    }
+    public List<Review> getReviewList() {
+        return reviewRepository.findAll();
+    }
+    public List<ReviewDto> getMemberReviewDto(Long memberId) {
+        List<Review> reviewList = getMemberReview(memberId);
+        return reviewList.stream().map(Review::toDto).toList();
+    }
+    public List<Review> getMemberReview(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        List<Review> reviewList = reviewRepository.findAllByMember(member);
-        return reviewList.stream().map(Review::toDto).toList();
+        return reviewRepository.findAllByMember(member);
     }
 }

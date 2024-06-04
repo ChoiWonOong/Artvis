@@ -2,6 +2,7 @@ package taba5.Artvis.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.dto.ReviewDto;
@@ -15,13 +16,18 @@ public class Review {
 
     private String title;
     private String contents;
+    @Getter
     private byte rating;
+    @Getter
     @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Getter
     @OneToOne
     @JoinColumn(name = "exhibition_id")
     private Exhibition exhibition;
+
     @Builder
     public Review(String title, String contents, byte rating, Member member, Exhibition exhibition) {
         this.title = title;
