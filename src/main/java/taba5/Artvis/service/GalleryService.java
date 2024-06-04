@@ -28,4 +28,10 @@ public class GalleryService {
                 .map(Gallery::toDto)
                 .toList();
     }
+
+    public List<GalleryDto> searchGallery(String keyword) {
+        return galleryRepository.findByNameContaining(keyword).stream()
+                .map(Gallery::toDto)
+                .toList();
+    }
 }

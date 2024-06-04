@@ -24,4 +24,8 @@ public class GalleryController {
     public List<GalleryDto> getGalleryList(){
         return galleryService.getGalleryList();
     }
+    @GetMapping("/search/{keyword}")
+    public List<GalleryDto> searchGallery(@PathVariable String keyword){
+        return galleryService.searchGallery(keyword);
+    }
 }
