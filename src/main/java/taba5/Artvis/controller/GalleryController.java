@@ -12,18 +12,22 @@ import java.util.List;
 @RequestMapping("/gallery")
 public class GalleryController {
     private final GalleryService galleryService;
+    // 미술관 저장
     @PostMapping("/save")
-    public GalleryDto save(GalleryDto dto){
+    public GalleryDto save(@RequestBody GalleryDto dto){
         return galleryService.save(dto);
     }
+    // id로 미술관 불러오기
     @GetMapping("{id}")
     public GalleryDto getGallery(@PathVariable Long id){
         return galleryService.getGallery(id);
     }
+    // 미술관 목록 불러오기
     @GetMapping("/list")
     public List<GalleryDto> getGalleryList(){
         return galleryService.getGalleryList();
     }
+    // 미술관 검색
     @GetMapping("/search/{keyword}")
     public List<GalleryDto> searchGallery(@PathVariable String keyword){
         return galleryService.searchGallery(keyword);

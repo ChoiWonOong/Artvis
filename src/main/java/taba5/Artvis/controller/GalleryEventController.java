@@ -12,11 +12,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GalleryEventController {
     private final GalleryEventService galleryEventService;
-
+    // 행사 저장
     @PostMapping("/save")
     public void saveGalleryEvent(@RequestBody GalleryEventDto galleryEventDto){
         galleryEventService.save(galleryEventDto);
     }
+    // 행사 리스트 출력
     @GetMapping("/list")
     public List<GalleryEventDto> getAllGalleryEvent(){
         return galleryEventService.findAll();

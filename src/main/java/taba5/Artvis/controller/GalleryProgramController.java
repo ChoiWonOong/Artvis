@@ -12,11 +12,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GalleryProgramController {
     private final GalleryProgramService galleryProgramService;
-
+    // 프로그램 저장
     @PostMapping("/save")
     public void saveGalleryProgram(@RequestBody GalleryProgramDto galleryProgramDto){
         galleryProgramService.save(galleryProgramDto);
     }
+    // 프로그램 리스트 출력
     @GetMapping("/list")
     public List<GalleryProgramDto> getAllGalleryEvent(){
         return galleryProgramService.findAll();

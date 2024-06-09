@@ -16,17 +16,14 @@ public class LikeController {
     public LikeController(LikeService likeService) {
         this.likeService = likeService;
     }
-
-    @GetMapping("/exhibition/{id}")
+    // 전시 좋아요
+    @PostMapping("/exhibition/{id}")
     public ExhibitionLikeDto saveExhibitionLike(@PathVariable Long id){
         return likeService.saveExhibitionLike(SecurityUtil.getCurrentMemberId(), id);
     }
+    // 작품 좋아요
     @PostMapping("/artwork/{id}")
     public ArtworkLikeDto saveArtworkLike(@PathVariable Long id){
         return likeService.saveArtworkLike(SecurityUtil.getCurrentMemberId(), id);
-    }
-    @GetMapping("/get/exhibition")
-    public List<ExhibitionLikeDto> getExhibitionLikeList(Long memberId){
-        return likeService.getExhibitionLikes(memberId);
     }
 }
