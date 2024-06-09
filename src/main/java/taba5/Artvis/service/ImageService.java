@@ -46,15 +46,15 @@ public class ImageService {
     @Transactional
     public Long saveImage(MultipartFile file, ExhibitionRequestDto exhibitionRequestDto) {
         // Create Exhibition
-        log.info("detailList : " + exhibitionRequestDto.getDetailList().stream().map(DetailDto::getContents).toList());
-        List<Detail> detailList = Detail.toEntityList(exhibitionRequestDto.getDetailList());
-        detailRepository.saveAll(detailList);
+        log.info("detailList : " + exhibitionRequestDto.getDetail());
         Exhibition exhibition = new Exhibition(
                 exhibitionRequestDto.getTitle(),
                 exhibitionRequestDto.getLocation(),
                 exhibitionRequestDto.getStartDate(),
                 exhibitionRequestDto.getEndDate(),
-                detailList);
+                exhibitionRequestDto.getDetail(),
+                exhibitionRequestDto.getImageUrl()
+                );
         exhibitionRepository.save(exhibition);
         for(String tagName : exhibitionRequestDto.getExhibitionTagList()){
             Tag tag = tagRepository.findByTagName(tagName)

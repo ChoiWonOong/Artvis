@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import taba5.Artvis.domain.Detail;
+import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Image;
 import taba5.Artvis.dto.Artwork.ArtworkDto;
 
@@ -21,13 +22,17 @@ public class Artwork {
     private Long id;
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private String imageUrl;
+    /*@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
-    private Artist artist;
-
+    private Artist artist;*/
+    private String artist;
+/*
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "artwork_id")
     private List<Detail> detailList = new ArrayList<>();
+*/
+    private String detail;
 
     @Setter
     @OneToOne
@@ -35,18 +40,23 @@ public class Artwork {
     private Image image;
 
     @Builder
-    public Artwork(String title, Artist artist, List<Detail> detailList){
+    public Artwork(String title, /*Artist artist*/ String artist, /*List<Detail> detailList*/ String detail, String imageUrl){
         this.title = title;
         this.artist = artist;
-        this.detailList = detailList;
+        //this.detailList = detailList;
+        this.imageUrl = imageUrl;
+        this.detail = detail;
+
     }
 
     public ArtworkDto toDto() {
         return ArtworkDto.builder()
                 .id(id)
                 .title(title)
-                .artistName(artist.getName())
-                .detail(detailList.stream().map(Detail::toDto).toList())
+                .artistName(artist)
+                //.detail(detailList.stream().map(Detail::toDto).toList())
+                .detail(detail)
+                .imageUrl(imageUrl)
                 .build();
     }
 }

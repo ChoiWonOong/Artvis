@@ -16,12 +16,14 @@ public class Gallery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String description;
     private String location;
     private String phoneNumber;
     private String email;
     private String homepage;
+
     @Builder
     public Gallery(String name, String description, String location, String phoneNumber, String email, String homepage) {
         this.name = name;

@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Member;
-import taba5.Artvis.domain.Review;
+import taba5.Artvis.domain.Review.Review;
 import taba5.Artvis.dto.flask.ExhibitionContentsRequestDto;
 import taba5.Artvis.dto.flask.FlaskResponseDto;
 import taba5.Artvis.dto.flask.RatingRequestDto;
+import taba5.Artvis.repository.HistoryRepository;
 import taba5.Artvis.service.ExhibitionService;
 import taba5.Artvis.service.FlaskService;
 import taba5.Artvis.service.MemberService;
@@ -21,7 +22,6 @@ import taba5.Artvis.util.SecurityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FlaskController {
     private final FlaskService flaskService;
-    private final ExhibitionService exhibitionService;
     private final ReviewService reviewService;
     private final MemberService memberService;
+    private final HistoryRepository historyRepository;
 
     @PostMapping("/get/collaborative")
     public ResponseEntity<FlaskResponseDto> getCollaborative() throws JsonProcessingException {
@@ -46,11 +46,10 @@ public class FlaskController {
         List<Exhibition> reviewExhibitionList = reviewList.stream().map(Review::getExhibition).toList();
         List<Long> reviewExhibitionIdList = reviewExhibitionList
                 .stream().map(Exhibition::getId).toList();
-        List<Long> exhibitionIdList = member.getHistory()
-                .stream().map(Exhibition::getId).toList();
+        List<Long> historyList = historyRepository.findByMember(member).stream().map(h -> h.getExhibition().getId()).toList();
 
         List<Long> recommendExhibitionIdList = new ArrayList<>();
-        recommendExhibitionIdList.addAll(exhibitionIdList);
+        recommendExhibitionIdList.addAll(historyList);
         recommendExhibitionIdList.addAll(reviewExhibitionIdList);
         List<Long> result = recommendExhibitionIdList.stream().distinct().toList();
 

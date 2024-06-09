@@ -6,7 +6,7 @@ import taba5.Artvis.Exception.ErrorCode;
 import taba5.Artvis.Exception.RestApiException;
 import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Member;
-import taba5.Artvis.domain.Review;
+import taba5.Artvis.domain.Review.Review;
 import taba5.Artvis.dto.ReviewDto;
 import taba5.Artvis.repository.ExhibitionRepository;
 import taba5.Artvis.repository.MemberRepository;
@@ -25,7 +25,7 @@ public class ReviewService {
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
         Exhibition exhibition = exhibitionRepository.findById(reviewDto.getExhibitionId())
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        Review review = new Review(reviewDto.getTitle(), reviewDto.getContents(), reviewDto.getRating(), member, exhibition);
+        Review review = new Review(reviewDto.getContents(), reviewDto.getRating(), member, exhibition);
         reviewRepository.save(review);
         return review.toDto();
     }
@@ -53,5 +53,10 @@ public class ReviewService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
         return reviewRepository.findAllByMember(member);
+    }
+
+    public List<ReviewDto> getReviewDtoList() {
+        List<Review> reviewList = getReviewList();
+        return reviewList.stream().map(Review::toDto).toList();
     }
 }

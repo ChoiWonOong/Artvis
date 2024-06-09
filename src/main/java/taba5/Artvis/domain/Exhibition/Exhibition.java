@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import taba5.Artvis.domain.*;
+import taba5.Artvis.domain.Art.Artwork;
+import taba5.Artvis.domain.Review.Review;
 import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 
@@ -28,14 +30,19 @@ public class Exhibition extends BaseEntity {
     @JoinColumn(name = "gallery_id")
     private Gallery gallery;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    /*@OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "exhibition_id")
-    private List<Detail> detailList = new ArrayList<>();
+    private List<Detail> detailList = new ArrayList<>();*/
+    private String detail;
 
-    @Setter
+    /*@Setter
     @OneToOne
     @JoinColumn(name = "image_id")
-    private Image image;
+    private Image image;*/
+
+    private String imageUrl;
+
+    private boolean isDummy = false;
 
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "history")
@@ -45,21 +52,33 @@ public class Exhibition extends BaseEntity {
     @JoinColumn(name = "recommend")
     private List<Exhibition> recommendList;
 
-    public Exhibition(String title, String location, String startDate, String endDate, List<Detail> detailList) {
+    @OneToMany
+    @JoinColumn(name = "review_id")
+    private List<Review> reviewList = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "artwork_id")
+    private List<Artwork> artworkList = new ArrayList<>();
+
+    public Exhibition(String title, String location, String startDate, String endDate, /*List<Detail> detailList*/ String detail, String imageUrl){
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.detailList = detailList;
+        this.imageUrl = imageUrl;
+        /*this.detailList = detailList;*/
+        this.detail = detail;
     }
 
     public ExhibitionResponseDto toResponseDto(){
         return ExhibitionResponseDto.builder()
                 .title(title)
+                .artworkDtos(artworkList.stream().map(Artwork::toDto).toList())
                 .location(location)
                 .startDate(startDate)
                 .endDate(endDate)
-                .detailList(detailList.stream().map(Detail::toDto).toList())
+                .detail(detail)
+                .imageUrl(imageUrl)
                 .build();
     }
     public ExhibitionHistoryDto toHistoryDto(){
@@ -75,5 +94,17 @@ public class Exhibition extends BaseEntity {
     }
     public void initializeRecommend(){
         recommendList = new ArrayList<>();
+    }
+    public void addReview(Review review){
+        reviewList.add(review);
+    }
+    public void addArtwork(Artwork artwork){
+        artworkList.add(artwork);
+    }
+    public void addHistory(Exhibition exhibition){
+        historyList.add(exhibition);
+    }
+    public void setDummy(){
+        isDummy = true;
     }
 }

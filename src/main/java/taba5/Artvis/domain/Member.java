@@ -41,16 +41,6 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @Getter
-    @Setter
-    @OneToMany
-    @JoinColumn(name = "recommend")
-    private List<Exhibition> recommend = new ArrayList<>();
-    @Getter
-    @OneToMany
-    @JoinColumn(name = "history_id")
-    private List<Exhibition> history = new ArrayList<>();
-
     @Builder
     public Member(String username, String password, String nickname, Authority authority){
         this.username = username;
@@ -74,13 +64,5 @@ public class Member extends BaseEntity{
     }
     public MyPageDto MemberToMyPageDto(){
         return new MyPageDto(this.username, this.nickname);
-    }
-    public void addHistory(Exhibition exhibition){
-        this.history.add(exhibition);
-    }
-    public HistoryDto getHistoryDto(){
-        HistoryDto historyDto = new HistoryDto();
-        historyDto.setHistory(history.stream().map(Exhibition::toHistoryDto).toList());
-        return historyDto;
     }
 }

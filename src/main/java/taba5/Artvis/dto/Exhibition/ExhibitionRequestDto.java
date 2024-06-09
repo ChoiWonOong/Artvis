@@ -15,7 +15,7 @@ public class ExhibitionRequestDto {
     private String startDate;
     private String endDate;
     private List<String> exhibitionTagList;
-    private List<DetailDto> detailList;
+    private String detail;
     private String imageUrl;
 
     public void printDto(){
@@ -24,6 +24,6 @@ public class ExhibitionRequestDto {
         log.info("startDate: {}", startDate);
         log.info("endDate: {}", endDate);
         log.info("exhibitionTagList: {}", exhibitionTagList);
-        log.info("detailList: {}", detailList);
+        log.info("detailList: {}", detail);
     }
 }
