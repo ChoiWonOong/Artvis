@@ -7,8 +7,8 @@ import taba5.Artvis.Exception.RestApiException;
 import taba5.Artvis.domain.Gallery;
 import taba5.Artvis.domain.Special.GalleryEvent;
 import taba5.Artvis.dto.special.GalleryEventDto;
-import taba5.Artvis.repository.Special.GalleryEventRepository;
 import taba5.Artvis.repository.GalleryRepository;
+import taba5.Artvis.repository.Special.GalleryEventRepository;
 
 import java.util.List;
 
@@ -28,5 +28,14 @@ public class GalleryEventService {
         return galleryEventRepository.findAll().stream()
                 .map(GalleryEvent::toDto)
                 .toList();
+    }
+
+    public GalleryEventDto findById(Long id) {
+        return galleryEventRepository.findById(id)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR)).toDto();
+    }
+
+    public List<GalleryEvent> searchEvent(String keyword) {
+        return galleryEventRepository.findByTitleContaining(keyword);
     }
 }

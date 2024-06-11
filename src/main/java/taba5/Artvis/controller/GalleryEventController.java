@@ -8,7 +8,7 @@ import taba5.Artvis.service.special.GalleryEventService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/galleryEvent")
+@RequestMapping("/event")
 @RequiredArgsConstructor
 public class GalleryEventController {
     private final GalleryEventService galleryEventService;
@@ -21,5 +21,9 @@ public class GalleryEventController {
     @GetMapping("/list")
     public List<GalleryEventDto> getAllGalleryEvent(){
         return galleryEventService.findAll();
+    }
+    @GetMapping("/{id}")
+    public GalleryEventDto getGalleryEvent(@PathVariable Long id){
+        return galleryEventService.findById(id);
     }
 }

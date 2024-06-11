@@ -29,4 +29,13 @@ public class GalleryProgramService {
                 .map(GalleryProgram::toDto)
                 .toList();
     }
+
+    public GalleryProgramDto findById(Long id) {
+        return galleryProgramRepository.findById(id)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR)).toDto();
+    }
+
+    public List<GalleryProgram> searchProgram(String keyword) {
+        return galleryProgramRepository.findByTitleContaining(keyword);
+    }
 }

@@ -16,6 +16,7 @@ public class GalleryProgramDto {
     private String startDate;
     private String endDate;
     private String organizer;
+    private String imageUrl;
     private Long galleryId;
     public GalleryProgram toEntity(){
         return GalleryProgram.builder()
@@ -25,6 +26,7 @@ public class GalleryProgramDto {
                 .startDate(startDate)
                 .endDate(endDate)
                 .organizer(organizer)
+                .imageUrl(imageUrl)
                 .build();
     }
 }

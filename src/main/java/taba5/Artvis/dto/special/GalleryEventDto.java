@@ -15,6 +15,7 @@ public class GalleryEventDto {
     private String startDate;
     private String endDate;
     private String organizer;
+    private String imageUrl;
     private Long galleryId;
 
     public GalleryEvent toEntity(){
@@ -25,6 +26,7 @@ public class GalleryEventDto {
                 .startDate(startDate)
                 .endDate(endDate)
                 .organizer(organizer)
+                .imageUrl(imageUrl)
                 .build();
     }
 }
