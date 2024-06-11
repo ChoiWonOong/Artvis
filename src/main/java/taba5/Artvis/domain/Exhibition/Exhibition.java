@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import taba5.Artvis.domain.*;
 import taba5.Artvis.domain.Art.Artwork;
+import taba5.Artvis.domain.History.History;
 import taba5.Artvis.domain.Review.Review;
 import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
@@ -13,10 +15,12 @@ import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Entity
 @NoArgsConstructor
 @Getter
 public class Exhibition extends BaseEntity {
+    @Column(name = "exhibition_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,12 +45,12 @@ public class Exhibition extends BaseEntity {
     private Image image;*/
 
     private String imageUrl;
-
+    @Column(name = "is_dummy")
     private boolean isDummy = false;
 
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "history")
-    private List<Exhibition> historyList = new ArrayList<>();
+    private List<History> historyList = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "recommend")
@@ -57,7 +61,7 @@ public class Exhibition extends BaseEntity {
     private List<Review> reviewList = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "artwork_id")
+    @JoinColumn(name = "exhibition")
     private List<Artwork> artworkList = new ArrayList<>();
 
     public Exhibition(String title, String location, String startDate, String endDate, /*List<Detail> detailList*/ String detail, String imageUrl){
@@ -71,6 +75,7 @@ public class Exhibition extends BaseEntity {
     }
 
     public ExhibitionResponseDto toResponseDto(){
+        log.info("ImageUrl : {}", imageUrl);
         return ExhibitionResponseDto.builder()
                 .title(title)
                 .artworkDtos(artworkList.stream().map(Artwork::toDto).toList())
@@ -98,11 +103,11 @@ public class Exhibition extends BaseEntity {
     public void addReview(Review review){
         reviewList.add(review);
     }
-    public void addArtwork(Artwork artwork){
-        artworkList.add(artwork);
+    public void addArtworks(List<Artwork> artwork){
+        artworkList.addAll(artwork);
     }
-    public void addHistory(Exhibition exhibition){
-        historyList.add(exhibition);
+    public void addHistory(History history){
+        historyList.add(history);
     }
     public void setDummy(){
         isDummy = true;

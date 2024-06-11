@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class Artwork {
+    @Column(name = "artwork_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,6 +34,10 @@ public class Artwork {
     private List<Detail> detailList = new ArrayList<>();
 */
     private String detail;
+
+    @ManyToOne
+    @JoinColumn(name = "exhibition")
+    private Exhibition exhibition;
 
     @Setter
     @OneToOne
