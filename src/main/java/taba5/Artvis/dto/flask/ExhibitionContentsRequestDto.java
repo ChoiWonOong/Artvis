@@ -11,7 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class ExhibitionContentsRequestDto extends FlaskRequestDto{
-    List<Long> exhibitionIdList = new ArrayList<>();
+    private Long userId;
+    private List<Long> exhibitionIdList = new ArrayList<>();
     public void addExhibitionId(Long exhibitionId){
         exhibitionIdList.add(exhibitionId);
     }
