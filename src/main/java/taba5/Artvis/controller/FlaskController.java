@@ -53,7 +53,7 @@ public class FlaskController {
         recommendExhibitionIdList.addAll(reviewExhibitionIdList);
         List<Long> result = recommendExhibitionIdList.stream().distinct().toList();
 
-        ExhibitionContentsRequestDto flaskDto = new ExhibitionContentsRequestDto(result);
+        ExhibitionContentsRequestDto flaskDto = new ExhibitionContentsRequestDto(SecurityUtil.getCurrentMemberId(),result);
         return ResponseEntity.ok(flaskService.getContentsBased(flaskDto));
     }
 }
