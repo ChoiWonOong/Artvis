@@ -1,9 +1,17 @@
 package taba5.Artvis.domain.History;
 
-import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import taba5.Artvis.domain.Exhibition.Exhibition;
+import taba5.Artvis.domain.Member;
 
-@Data
+@Entity
 public class HistoryId {
-    private Long memberId;
-    private Long exhibitionId;
+    @Id
+    @ManyToOne
+    private Member member;
+    @Id
+    @ManyToOne
+    private Exhibition exhibition;
 }
