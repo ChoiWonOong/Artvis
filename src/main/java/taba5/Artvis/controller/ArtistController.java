@@ -1,7 +1,10 @@
 package taba5.Artvis.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import taba5.Artvis.Exception.ErrorResponse;
+import taba5.Artvis.Exception.RestApiException;
 import taba5.Artvis.dto.Artwork.ArtistDto;
 import taba5.Artvis.service.ArtistService;
 
@@ -16,7 +19,11 @@ public class ArtistController {
         artistService.save(artistDto);
     }
     @GetMapping("/{id}")
-    public ArtistDto getArtist(@PathVariable Long id){
-        return artistService.getArtist(id);
+    public ResponseEntity<?> getArtist(@PathVariable Long id){
+        try{
+            return ResponseEntity.ok(artistService.getArtist(id));
+        }catch (RestApiException e){
+            return ErrorResponse.toResponseEntity(e.getErrorCode());
+        }
     }
 }

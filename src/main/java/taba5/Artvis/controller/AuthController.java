@@ -5,6 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import taba5.Artvis.Exception.ErrorCode;
+import taba5.Artvis.Exception.ErrorResponse;
+import taba5.Artvis.Exception.RestApiException;
 import taba5.Artvis.dto.member.MemberCreateRequestDto;
 import taba5.Artvis.dto.member.MemberCreateResponseDto;
 import taba5.Artvis.dto.member.MemberPasswordReassignDto;
@@ -23,8 +26,12 @@ public class AuthController {
         return ResponseEntity.ok(authService.memberSignup(memberCreateRequestDto));
     }
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> memberLogin(@RequestBody MemberCreateRequestDto memberCreateRequestDto){
-        return ResponseEntity.ok(authService.memberLogin(memberCreateRequestDto));
+    public ResponseEntity<?> memberLogin(@RequestBody MemberCreateRequestDto memberCreateRequestDto){
+        try{
+            return ResponseEntity.ok(authService.memberLogin(memberCreateRequestDto));
+        }catch (RuntimeException e){
+            return ErrorResponse.toResponseEntity(e, "BAD_CREDENTIALS_EXCEPTION");
+        }
     }
     @PostMapping("/reissue")
     public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {

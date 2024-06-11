@@ -46,7 +46,7 @@ public class ImageService {
     @Transactional
     public Long saveImage(MultipartFile file, ExhibitionRequestDto exhibitionRequestDto) {
         // Create Exhibition
-        log.info("detailList : " + exhibitionRequestDto.getDetail());
+        log.info("detailList : {}", exhibitionRequestDto.getDetail());
         Exhibition exhibition = new Exhibition(
                 exhibitionRequestDto.getTitle(),
                 exhibitionRequestDto.getLocation(),

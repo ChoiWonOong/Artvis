@@ -9,6 +9,8 @@ import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Like.ArtworkLike;
 import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
+import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
+import taba5.Artvis.dto.Like.InitializeLikeDto;
 import taba5.Artvis.dto.Like.ArtworkLikeDto;
 import taba5.Artvis.dto.Like.ExhibitionLikeDto;
 import taba5.Artvis.repository.LikeRepository.ArtworkLikeRepository;
@@ -16,6 +18,7 @@ import taba5.Artvis.repository.ArtworkRepository;
 import taba5.Artvis.repository.ExhibitionRepository;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
 import taba5.Artvis.repository.MemberRepository;
+import taba5.Artvis.util.SecurityUtil;
 
 import java.util.List;
 
@@ -27,6 +30,8 @@ public class LikeService {
     private final ExhibitionRepository exhibitionRepository;
     private final ArtworkRepository artworkRepository;
     private final ArtworkLikeRepository artworkLikeRepository;
+    private final ExhibitionService exhibitionService;
+
     public ArtworkLikeDto saveArtworkLike(Long memberId, Long artworkId){
         Member member = findMember(memberId);
         Artwork artwork = findArtwork(artworkId);
@@ -59,4 +64,20 @@ public class LikeService {
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
     }
 
+    public List<ExhibitionResponseDto> initializeLike(InitializeLikeDto dto, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        List<ExhibitionLike> exhibitionLikes = dto.getExhibitionIdList().stream()
+                .map(r->{
+                    Exhibition exhibition = exhibitionRepository.findById(r)
+                            .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+                    ExhibitionLike exhibitionLike = new ExhibitionLike(member, exhibition);
+                    exhibitionLike.setDummy();
+                    exhibitionLikeRepository.save(exhibitionLike);
+                    return exhibitionLike;
+                }).toList();
+        return exhibitionLikes.stream()
+                .map((r)->exhibitionService.getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r.getExhibition()))
+                .toList();
+    }
 }

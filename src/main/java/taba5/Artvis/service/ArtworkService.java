@@ -61,4 +61,17 @@ public class ArtworkService {
         return artworkLikeList.stream()
                 .map(artworkLike -> getArtworkResponseDto(SecurityUtil.getCurrentMemberId(), artworkLike.getArtwork())).toList();
     }
+
+    public ArtworkDto updateArtwork(Long id, ArtworkDto artworkDto) {
+        Artwork artwork = artworkRepository.findById(id)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        artwork = new Artwork(
+                artworkDto.getTitle(),
+                artworkDto.getArtistName(),
+                artworkDto.getDetail(),
+                artworkDto.getImageUrl()
+        );
+        artwork = artworkRepository.save(artwork);
+        return artwork.toDto();
+    }
 }

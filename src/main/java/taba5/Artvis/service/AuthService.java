@@ -1,6 +1,7 @@
 package taba5.Artvis.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -24,7 +25,7 @@ import taba5.Artvis.repository.RefreshTokenRepository;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthService {
@@ -44,11 +45,16 @@ public class AuthService {
     @Transactional
     public TokenDto memberLogin(MemberCreateRequestDto memberCreateRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = memberCreateRequestDto.toAuthentication();
-        System.out.println(authenticationToken.toString());
-        TokenDto tokenDto = getToken(authenticationToken);
-        System.out.println(tokenDto.getAccessToken());
-        return tokenDto;
+        try{
+            UsernamePasswordAuthenticationToken authenticationToken = memberCreateRequestDto.toAuthentication();
+            log.info("AuthenticationToken : {}", authenticationToken.toString());
+            TokenDto tokenDto = getToken(authenticationToken);
+            System.out.println(tokenDto.getAccessToken());
+            return tokenDto;
+        }
+        catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
     @Transactional
     public String logout(String accessToken, User user){
@@ -93,7 +99,7 @@ public class AuthService {
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-        System.out.println(tokenDto);
+        log.info("tokenDto: {}", tokenDto.getAccessToken());
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
