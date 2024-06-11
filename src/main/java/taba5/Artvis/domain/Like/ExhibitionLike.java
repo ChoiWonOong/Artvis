@@ -20,12 +20,15 @@ public class ExhibitionLike{
     @JoinColumn(name = "exhibition_id")
     @Id
     private Exhibition exhibition;
-
+    private boolean isDummy = false;
     public ExhibitionLike(Member member, Exhibition exhibition) {
         this.member = member;
         this.exhibition = exhibition;
     }
     public ExhibitionLikeDto toDto() {
         return new ExhibitionLikeDto(getMember().getId(), this.getExhibition().getId());
+    }
+    public void setDummy() {
+        this.isDummy = true;
     }
 }

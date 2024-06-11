@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ExhibitionResponseDto extends ImageResponseDto {
+public class ExhibitionResponseDto {
     private Long id;
     private String title;
     private List<ArtworkDto> artworkDtos;
@@ -23,7 +23,6 @@ public class ExhibitionResponseDto extends ImageResponseDto {
     private List<String> tagList;
     private String detail;
     private String imageUrl;
-    @Setter
     private Boolean isLiked;
     private List<ReviewDto> reviewList = new ArrayList<>();
     @Builder
@@ -38,8 +37,4 @@ public class ExhibitionResponseDto extends ImageResponseDto {
         this.detail = detail;
         this.imageUrl = imageUrl;
     }
-    public void setImageUrl(String imageUrl){
-        super.setImageUrls(imageUrl);
-    }
-
 }
