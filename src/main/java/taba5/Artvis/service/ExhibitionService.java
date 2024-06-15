@@ -1,7 +1,12 @@
 package taba5.Artvis.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import taba5.Artvis.Exception.ErrorCode;
 import taba5.Artvis.Exception.RestApiException;
@@ -17,13 +22,16 @@ import taba5.Artvis.dto.Exhibition.ExhibitionArtworkAddDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
+import taba5.Artvis.dto.Review.ReviewResponseDto;
+import taba5.Artvis.dto.flask.CollaborativeHomeRequestDto;
+import taba5.Artvis.dto.flask.ContentsHomeRequestDto;
+import taba5.Artvis.dto.flask.FlaskResponseDto;
 import taba5.Artvis.repository.*;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
 import taba5.Artvis.util.SecurityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -38,6 +46,9 @@ public class ExhibitionService {
     private final MemberRepository memberRepository;
     private final ArtworkRepository artworkRepository;
     private final HistoryRepository historyRepository;
+    private final FlaskService flaskService;
+    private final MemberService memberService;
+    private final ReviewService reviewService;
 
     public ExhibitionResponseDto createExhibitionDto(ExhibitionRequestDto dto){
         Exhibition exhibition = createExhibition(dto);
@@ -58,10 +69,9 @@ public class ExhibitionService {
                 dto.getDetail(),
                 dto.getImageUrl());
     }
-    public ExhibitionResponseDto getExhibition(Long memberId, Long exhibitionId){
-        Exhibition exhibition = exhibitionRepository.findById(exhibitionId)
+    public Exhibition getExhibition(Long exhibitionId){
+        return exhibitionRepository.findById(exhibitionId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        return getExhibitionResponseDto(memberId, exhibition);
     }
     public void addArtworkToExhibition(ExhibitionArtworkAddDto dto){
         Exhibition exhibition = exhibitionRepository.findById(dto.getExhibitionId())
@@ -71,7 +81,7 @@ public class ExhibitionService {
         exhibition.addArtworks(artworks);
         exhibitionRepository.save(exhibition);
     }
-     ExhibitionResponseDto getExhibitionResponseDto(Long memberId, Exhibition exhibition) {
+    public ExhibitionResponseDto getExhibitionResponseDto(Long memberId, Exhibition exhibition) {
         List<ExhibitionTag> exhibitionTag = exhibitionTagRepository.findByExhibition(exhibition);
 
         ExhibitionResponseDto dto = ExhibitionResponseDto.builder()
@@ -86,11 +96,11 @@ public class ExhibitionService {
                 .tagList(exhibitionTag.stream().map(ExhibitionTag::getTagName).toList())
                 .build();
         dto.setIsLiked(exhibitionLikeRepository.existsByMember_IdAndExhibition_Id(memberId, exhibition.getId()));
-        reviewRepository.findAllByExhibition(exhibition).stream()
-                .map(Review::toDto)
-                .forEach(dto.getReviewList()::add);
+        List<Review> reviewList = reviewRepository.findAllByExhibitionId(exhibition.getId());
+        dto.getReviewList().addAll(reviewList.stream().map(reviewService::reviewToDto).toList());
         return dto;
     }
+
     public List<ExhibitionResponseDto> getLikedExhibition(Long memberId){
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
         List<ExhibitionLike> exhibitionLikes = exhibitionLikeRepository.findByMember(member);
@@ -132,10 +142,16 @@ public class ExhibitionService {
     public List<Exhibition> getExhibitionList(){
         return exhibitionRepository.findAll();
     }
-    public List<ExhibitionResponseDto> getExhibitionDtoList() {
-        return exhibitionRepository.findAll().stream()
+    public List<ExhibitionResponseDto> getExhibitionDtoList(List<Exhibition> exhibitionList) {
+        return exhibitionList.stream()
                 .map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r))
                 .toList();
+    }
+    public Page<ExhibitionResponseDto> getExhibitionDtoPage(int pageNo, String criteria) {
+        int PAGE_SIZE = 50;
+        Pageable pageable = PageRequest.of(pageNo, PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
+
+        return exhibitionRepository.findByOrderById(pageable).map(Exhibition::toResponseDto);
     }
 
     public List<ExhibitionResponseDto> getExhibitionListByTagName(String tagName) {
@@ -150,7 +166,6 @@ public class ExhibitionService {
 
     public List<ExhibitionResponseDto> searchExhibition(String keyword) {
         List<Exhibition> list =  exhibitionRepository.findByTitleContaining(keyword);
-        log.info("list: {}", list.stream().map(Exhibition::getTitle).toList());
         List<ExhibitionResponseDto> result = list.stream().map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r)).toList();
         return result;
     }
@@ -178,7 +193,9 @@ public class ExhibitionService {
     }
 
     public ExhibitionResponseDto findExhibition(String title) {
+        log.info("enter");
         Exhibition exhibition = exhibitionRepository.findByTitle(title).orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        log.info("enter");
         return getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), exhibition);
     }
 
@@ -188,7 +205,28 @@ public class ExhibitionService {
         exhibitionRepository.save(dummy);
         return getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), dummy);
     }
-
+    public List<Exhibition> getContentsHome() throws JsonProcessingException {
+        List<Long> historyAndLikes = memberService.getHistoryAndLikes(SecurityUtil.getCurrentMemberId())
+                .stream().map(Exhibition::getId).toList();
+        CollaborativeHomeRequestDto flaskDto = new CollaborativeHomeRequestDto(SecurityUtil.getCurrentMemberId());
+        flaskDto.addExhibitionId(historyAndLikes);
+        String url = "api/home1";
+        FlaskResponseDto flaskResult = flaskService.getCollaborativeHome(flaskDto, url);
+        return flaskResult.getResult().stream()
+                .map(r->exhibitionRepository.findById(r).orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR)))
+                .toList();
+    }
+    public List<Exhibition> getCollaborativeHome() throws JsonProcessingException {
+        List<Long> historyAndLikes = memberService.getHistoryAndLikes(SecurityUtil.getCurrentMemberId())
+                .stream().map(Exhibition::getId).toList();
+        CollaborativeHomeRequestDto flaskDto = new CollaborativeHomeRequestDto(SecurityUtil.getCurrentMemberId());
+        flaskDto.addExhibitionId(historyAndLikes);
+        String url = "api/home2";
+        FlaskResponseDto flaskResult = flaskService.getCollaborativeHome(flaskDto, url);
+        return flaskResult.getResult().stream()
+                .map(r->exhibitionRepository.findById(r).orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR)))
+                .toList();
+    }
     public List<Exhibition> getDummyExhibition() {
         return exhibitionRepository.findByDummyIsTrue();
     }

@@ -19,7 +19,7 @@ public class GalleryController {
     }
     // id로 미술관 불러오기
     @GetMapping("{id}")
-    public GalleryDto getGallery(@PathVariable Long id){
+    public GalleryDto getGallery(@PathVariable(name = "id") Long id){
         return galleryService.getGallery(id);
     }
     // 미술관 목록 불러오기
@@ -29,7 +29,7 @@ public class GalleryController {
     }
     // 미술관 검색
     @GetMapping("/search/{keyword}")
-    public List<GalleryDto> searchGallery(@PathVariable String keyword){
+    public List<GalleryDto> searchGallery(@PathVariable(name = "keyword") String keyword){
         return galleryService.searchGallery(keyword);
     }
 }

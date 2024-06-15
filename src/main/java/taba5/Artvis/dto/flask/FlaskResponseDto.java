@@ -5,5 +5,5 @@ import lombok.Getter;
 import java.util.List;
 @Getter
 public class FlaskResponseDto {
-    private List<Long> exhibitionIdList;
+    private List<Long> result;
 }

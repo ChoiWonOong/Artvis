@@ -20,7 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "member")
 @NoArgsConstructor
-public class Member extends BaseEntity{
+public class    Member extends BaseEntity{
     @Getter
     @Id
     @Column(name ="member_id")

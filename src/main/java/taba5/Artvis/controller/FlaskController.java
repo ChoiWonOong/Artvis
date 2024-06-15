@@ -4,18 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import taba5.Artvis.domain.Exhibition.Exhibition;
+import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
 import taba5.Artvis.domain.Review.Review;
-import taba5.Artvis.dto.flask.ExhibitionContentsRequestDto;
+import taba5.Artvis.dto.flask.ContentsDetailRequestDto;
+import taba5.Artvis.dto.flask.ContentsHomeRequestDto;
 import taba5.Artvis.dto.flask.FlaskResponseDto;
-import taba5.Artvis.dto.flask.RatingRequestDto;
+import taba5.Artvis.dto.flask.CollaborativeHomeRequestDto;
 import taba5.Artvis.repository.HistoryRepository;
-import taba5.Artvis.service.ExhibitionService;
 import taba5.Artvis.service.FlaskService;
+import taba5.Artvis.service.LikeService;
 import taba5.Artvis.service.MemberService;
 import taba5.Artvis.service.ReviewService;
 import taba5.Artvis.util.SecurityUtil;
@@ -25,35 +28,36 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/flask")
+@RequestMapping("/recommend")
 @Slf4j
 public class FlaskController {
     private final FlaskService flaskService;
     private final ReviewService reviewService;
     private final MemberService memberService;
+    private final LikeService likeService;
     private final HistoryRepository historyRepository;
-
-    @PostMapping("/get/collaborative")
-    public ResponseEntity<FlaskResponseDto> getCollaborative() throws JsonProcessingException {
-        RatingRequestDto flaskDto = new RatingRequestDto(SecurityUtil.getCurrentMemberId());
-        return ResponseEntity.ok(flaskService.getCollaborative(flaskDto));
-    }
-    @PostMapping("/get/contentsbased")
-    public ResponseEntity<FlaskResponseDto> getContentsBased() throws JsonProcessingException {
-        Member member = memberService.getMe();
-
-        List<Review> reviewList = reviewService.getMemberReview(member.getId());
-        List<Exhibition> reviewExhibitionList = reviewList.stream().map(Review::getExhibition).toList();
-        List<Long> reviewExhibitionIdList = reviewExhibitionList
+    @PostMapping("/get/home/contents")
+    public ResponseEntity<?> getContentsHome() throws JsonProcessingException{
+        List<Long> historyAndLikes = memberService.getHistoryAndLikes(SecurityUtil.getCurrentMemberId())
                 .stream().map(Exhibition::getId).toList();
-        List<Long> historyList = historyRepository.findByMember(member).stream().map(h -> h.getExhibition().getId()).toList();
-
-        List<Long> recommendExhibitionIdList = new ArrayList<>();
-        recommendExhibitionIdList.addAll(historyList);
-        recommendExhibitionIdList.addAll(reviewExhibitionIdList);
-        List<Long> result = recommendExhibitionIdList.stream().distinct().toList();
-
-        ExhibitionContentsRequestDto flaskDto = new ExhibitionContentsRequestDto(SecurityUtil.getCurrentMemberId(),result);
-        return ResponseEntity.ok(flaskService.getContentsBased(flaskDto));
+        CollaborativeHomeRequestDto flaskDto = new CollaborativeHomeRequestDto(SecurityUtil.getCurrentMemberId());
+        flaskDto.addExhibitionId(historyAndLikes);
+        String url = "api/home1";
+        return ResponseEntity.ok(flaskService.getCollaborativeHome(flaskDto,url));
+    }
+    @PostMapping("/get/home/collaborative")
+    public ResponseEntity<FlaskResponseDto> getCollaborativeHome() throws JsonProcessingException {
+        List<Long> historyAndLikes = memberService.getHistoryAndLikes(SecurityUtil.getCurrentMemberId())
+                .stream().map(Exhibition::getId).toList();
+        CollaborativeHomeRequestDto flaskDto = new CollaborativeHomeRequestDto(SecurityUtil.getCurrentMemberId());
+        flaskDto.addExhibitionId(historyAndLikes);
+        String url = "api/home2";
+        return ResponseEntity.ok(flaskService.getCollaborativeHome(flaskDto, url));
+    }
+    @PostMapping("/get/contents/{id}")
+    public ResponseEntity<FlaskResponseDto> getContentsBased(@PathVariable(name = "id") Long id) throws JsonProcessingException {
+        ContentsDetailRequestDto flaskDto = new ContentsDetailRequestDto(SecurityUtil.getCurrentMemberId(), id);
+        String url = "api/exhibition";
+        return ResponseEntity.ok(flaskService.getContentsBased(flaskDto,url));
     }
 }

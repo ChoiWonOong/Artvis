@@ -37,6 +37,7 @@ public class Exhibition extends BaseEntity {
     /*@OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "exhibition_id")
     private List<Detail> detailList = new ArrayList<>();*/
+    @Column(length = 1000)
     private String detail;
 
     /*@Setter
@@ -57,10 +58,6 @@ public class Exhibition extends BaseEntity {
     private List<Exhibition> recommendList;
 
     @OneToMany
-    @JoinColumn(name = "review_id")
-    private List<Review> reviewList = new ArrayList<>();
-
-    @OneToMany
     @JoinColumn(name = "exhibition")
     private List<Artwork> artworkList = new ArrayList<>();
 
@@ -77,6 +74,7 @@ public class Exhibition extends BaseEntity {
     public ExhibitionResponseDto toResponseDto(){
         log.info("ImageUrl : {}", imageUrl);
         return ExhibitionResponseDto.builder()
+                .id(id)
                 .title(title)
                 .artworkDtos(artworkList.stream().map(Artwork::toDto).toList())
                 .location(location)
@@ -99,9 +97,6 @@ public class Exhibition extends BaseEntity {
     }
     public void initializeRecommend(){
         recommendList = new ArrayList<>();
-    }
-    public void addReview(Review review){
-        reviewList.add(review);
     }
     public void addArtworks(List<Artwork> artwork){
         artworkList.addAll(artwork);

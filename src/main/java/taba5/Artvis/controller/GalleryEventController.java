@@ -6,6 +6,7 @@ import taba5.Artvis.dto.special.GalleryEventDto;
 import taba5.Artvis.service.special.GalleryEventService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/event")
@@ -25,5 +26,9 @@ public class GalleryEventController {
     @GetMapping("/{id}")
     public GalleryEventDto getGalleryEvent(@PathVariable Long id){
         return galleryEventService.findById(id);
+    }
+    @PostMapping("/image/{id}")
+    public GalleryEventDto setUrl(@RequestBody Map<String, String> dto,@PathVariable(name = "id") Long id){
+        return galleryEventService.setUrl(id, dto);
     }
 }

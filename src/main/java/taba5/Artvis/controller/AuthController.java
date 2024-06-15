@@ -1,6 +1,7 @@
 package taba5.Artvis.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -14,7 +15,7 @@ import taba5.Artvis.dto.member.MemberPasswordReassignDto;
 import taba5.Artvis.dto.token.TokenDto;
 import taba5.Artvis.dto.token.TokenRequestDto;
 import taba5.Artvis.service.AuthService;
-
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class AuthController {
         try{
             return ResponseEntity.ok(authService.memberLogin(memberCreateRequestDto));
         }catch (RuntimeException e){
+            log.error("Error",e);
             return ErrorResponse.toResponseEntity(e, "BAD_CREDENTIALS_EXCEPTION");
         }
     }

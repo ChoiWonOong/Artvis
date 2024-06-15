@@ -46,20 +46,22 @@ public class ArtworkService {
         log.info("artworkName: {}", artwork.getArtist());
         artworkRepository.save(artwork);
     }
-    public ArtworkDto getArtwork(Long memberId, Long artworkId){
+    public ArtworkDto getArtwork(Long artworkId){
         Artwork artwork = artworkRepository.findById(artworkId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        return getArtworkResponseDto(memberId, artwork);
+        return getArtworkResponseDto(artwork);
     }
-    public ArtworkDto getArtworkResponseDto(Long memberId, Artwork artwork){
-        ArtworkDto dto = artwork.toDto();
-        dto.setIsLiked(artworkLikeRepository.existsByMember_IdAndArtwork_Id(memberId, artwork.getId()));
-        return dto;
+    public Artwork findArtwork(Long artworkId){
+        return artworkRepository.findById(artworkId)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+    }
+    public ArtworkDto getArtworkResponseDto(Artwork artwork){
+        return artwork.toDto();
     }
     public List<ArtworkDto> getLikedArtwork(Long memberId){
         List<ArtworkLike> artworkLikeList = artworkLikeRepository.findByMember_Id(memberId);
         return artworkLikeList.stream()
-                .map(artworkLike -> getArtworkResponseDto(SecurityUtil.getCurrentMemberId(), artworkLike.getArtwork())).toList();
+                .map(artworkLike -> getArtworkResponseDto(artworkLike.getArtwork())).toList();
     }
 
     public ArtworkDto updateArtwork(Long id, ArtworkDto artworkDto) {

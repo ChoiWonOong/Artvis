@@ -19,7 +19,7 @@ public class ArtistController {
         artistService.save(artistDto);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> getArtist(@PathVariable Long id){
+    public ResponseEntity<?> getArtist(@PathVariable(name = "id") Long id){
         try{
             return ResponseEntity.ok(artistService.getArtist(id));
         }catch (RestApiException e){

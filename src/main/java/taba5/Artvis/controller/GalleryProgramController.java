@@ -23,7 +23,7 @@ public class GalleryProgramController {
         return galleryProgramService.findAll();
     }
     @GetMapping("/{id}")
-    public GalleryProgramDto getGalleryEvent(@PathVariable Long id){
+    public GalleryProgramDto getGalleryEvent(@PathVariable(name = "id") Long id){
         return galleryProgramService.findById(id);
     }
 }

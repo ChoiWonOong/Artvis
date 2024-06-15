@@ -22,7 +22,7 @@ public class ImageController {
         return ResponseEntity.ok(imageService.saveImage(image, exhibitionRequestDto));
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> loadImage(@PathVariable Long id) throws IOException {
+    public ResponseEntity<Resource> loadImage(@PathVariable(name = "id") Long id) throws IOException {
         return imageService.loadImage(id);
     }
 }

@@ -1,25 +1,25 @@
 package taba5.Artvis.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import taba5.Artvis.Exception.ErrorResponse;
 import taba5.Artvis.Exception.RestApiException;
 import taba5.Artvis.domain.Exhibition.Exhibition;
-import taba5.Artvis.dto.Exhibition.ExhibitionArtworkAddDto;
-import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
-import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
-import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
+import taba5.Artvis.dto.Exhibition.*;
 import taba5.Artvis.service.ExhibitionService;
 import taba5.Artvis.util.SecurityUtil;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/exhibition")
 public class ExhibitionController {
     private final ExhibitionService exhibitionService;
+    private final FlaskController flaskController;
     // 전시회 생성
     @PostMapping("/create")
     public ResponseEntity<ExhibitionResponseDto> createExhibition(@RequestBody ExhibitionRequestDto exhibitionRequestDto){
@@ -50,9 +50,9 @@ public class ExhibitionController {
     }
     // id로 전시회 불러오기
     @GetMapping("/{id}")
-    public ResponseEntity<?> getExhibition(@PathVariable Long id){
+    public ResponseEntity<?> getExhibition(@PathVariable(name = "id") Long id){
         try{
-            return ResponseEntity.ok(exhibitionService.getExhibition(SecurityUtil.getCurrentMemberId(), id));
+            return ResponseEntity.ok(exhibitionService.getExhibition(id));
         }catch (RestApiException e) {
             return ErrorResponse.toResponseEntity(e.getErrorCode());
         }catch (RuntimeException e){
@@ -61,9 +61,10 @@ public class ExhibitionController {
     }
     // 이름으로 전시회 찾기
     @PostMapping("/find")
-    public ResponseEntity<?> findExhibition(@RequestBody ExhibitionRequestDto exhibitionRequestDto){
+    public ResponseEntity<?> findExhibition(@RequestBody ExhibitionFindDto dto){
         try{
-            return ResponseEntity.ok(exhibitionService.findExhibition(exhibitionRequestDto.getTitle()));
+            log.info("enter");
+            return ResponseEntity.ok(exhibitionService.findExhibition(dto.getTitle()));
         }catch (RestApiException e) {
             return ErrorResponse.toResponseEntity(e.getErrorCode());
         }catch (RuntimeException e){
@@ -83,7 +84,7 @@ public class ExhibitionController {
     }
     // 전시회 좋아요
     @PostMapping("/add/history/{id}")
-    public ResponseEntity<?> addHistory(@PathVariable Long id){
+    public ResponseEntity<?> addHistory(@PathVariable(name = "id") Long id){
         try{
             return ResponseEntity.ok(exhibitionService.addHistory(id));
         }catch (RestApiException e) {
@@ -96,13 +97,32 @@ public class ExhibitionController {
     @GetMapping("/list")
     public ResponseEntity<?> getExhibitionList(){
         try{
-            return ResponseEntity.ok(exhibitionService.getExhibitionDtoList());
+            //CollaborativeHome
+            //return ResponseEntity.ok(exhibitionService.getCollaborativeHome());
+            //ContentsBasedHome
+            return ResponseEntity.ok(exhibitionService.getContentsHome()
+                    .stream().map(r->exhibitionService.getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r)));
+            //return ResponseEntity.ok(exhibitionService.getExhibitionDtoList());
+        }catch (RestApiException e) {
+            return ErrorResponse.toResponseEntity(e.getErrorCode());
+        }catch (RuntimeException e){
+            return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @GetMapping("/page")
+    public ResponseEntity<?> getExhibitionPage(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                               @RequestParam(required = false, defaultValue = "id", value = "criteria") String criteria){
+        try{
+            return ResponseEntity.ok(exhibitionService.getExhibitionDtoPage(pageNo, criteria));
         }catch (RestApiException e) {
             return ErrorResponse.toResponseEntity(e.getErrorCode());
         }catch (RuntimeException e){
             return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
         }
     }
+
     // 추천 전시회 불러오기
     @GetMapping("/list/recommend")
     public ResponseEntity<?> getRecommendExhibitionList(){
@@ -116,7 +136,7 @@ public class ExhibitionController {
     }
     // 태그로 전시회 불러오기
     @GetMapping("/list/{tagName}")
-    public ResponseEntity<?> getExhibitionListByTagName(@PathVariable String tagName){
+    public ResponseEntity<?> getExhibitionListByTagName(@PathVariable(name = "tagName") String tagName){
         try{
             return ResponseEntity.ok(exhibitionService.getExhibitionListByTagName(tagName));
         }catch (RestApiException e) {

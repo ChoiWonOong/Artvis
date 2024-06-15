@@ -33,11 +33,11 @@ public class Artwork {
     @JoinColumn(name = "artwork_id")
     private List<Detail> detailList = new ArrayList<>();
 */
+    @Column(length = 1000)
     private String detail;
 
-    @ManyToOne
-    @JoinColumn(name = "exhibition")
-    private Exhibition exhibition;
+    @Column(name = "exhibition")
+    private Long exhibitionId;
 
     @Setter
     @OneToOne

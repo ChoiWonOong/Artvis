@@ -21,13 +21,12 @@ public class LikeController {
     }
     // 전시 좋아요
     @PostMapping("/exhibition/{id}")
-    public ExhibitionLikeDto saveExhibitionLike(@PathVariable Long id){
+    public ExhibitionLikeDto saveExhibitionLike(@PathVariable(name = "id") Long id){
         return likeService.saveExhibitionLike(SecurityUtil.getCurrentMemberId(), id);
     }
-    // 작품 좋아요
-    @PostMapping("/artwork/{id}")
-    public ArtworkLikeDto saveArtworkLike(@PathVariable Long id){
-        return likeService.saveArtworkLike(SecurityUtil.getCurrentMemberId(), id);
+    @PostMapping("/exhibition/{id}/delete")
+    public ExhibitionLikeDto deleteExhibitionLike(@PathVariable(name = "id") Long id){
+        return likeService.deleteExhibitionLike(SecurityUtil.getCurrentMemberId(), id);
     }
     // 전시회 초기 추천 설정
     @PostMapping("/initialize")

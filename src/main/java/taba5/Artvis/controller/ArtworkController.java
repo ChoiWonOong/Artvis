@@ -23,9 +23,9 @@ public class ArtworkController {
     }
     // id로 작품 불러오기
     @GetMapping("/{id}")
-    public ResponseEntity<?> getArtwork(@PathVariable Long id){
+    public ResponseEntity<?> getArtwork(@PathVariable(name = "id") Long id){
         try{
-            return ResponseEntity.ok(artworkService.getArtwork(SecurityUtil.getCurrentMemberId(), id));
+            return ResponseEntity.ok(artworkService.getArtwork(id));
         }catch (RestApiException e){
             return ErrorResponse.toResponseEntity(e.getErrorCode());
         }catch (RuntimeException e){

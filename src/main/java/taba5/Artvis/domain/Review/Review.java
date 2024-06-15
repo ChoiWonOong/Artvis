@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import taba5.Artvis.domain.BaseEntity;
-import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Member;
-import taba5.Artvis.dto.ReviewDto;
 
 @Entity
 @NoArgsConstructor
+@Getter
 @Table(uniqueConstraints = {
         @UniqueConstraint(columnNames = {"member_id", "exhibition_id"})
 
@@ -31,29 +30,18 @@ public class Review extends BaseEntity {
     private Member member;
 
     @Getter
-    @ManyToOne
-    @JoinColumn(name = "exhibition_id")
-    private Exhibition exhibition;
+    @Column(name = "exhibition_id")
+    private Long exhibitionId;
 
     @Getter
     private boolean isDummy = false;
 
     @Builder
-    public Review(String contents, byte rating, Member member, Exhibition exhibition) {
+    public Review(String contents, byte rating, Member member, Long exhibitionId) {
         this.contents = contents;
         this.rating = rating;
         this.member = member;
-        this.exhibition = exhibition;
-    }
-    public ReviewDto toDto(){
-        return ReviewDto.builder()
-                .id(id)
-                .memberId(member.getId())
-                .title(exhibition.getTitle())
-                .exhibitionId(exhibition.getId())
-                .contents(contents)
-                .rating(rating)
-                .build();
+        this.exhibitionId = exhibitionId;
     }
     public void setDummy(){
         isDummy = true;

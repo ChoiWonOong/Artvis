@@ -20,6 +20,7 @@ public class GalleryEvent{
     protected String startDate;
     protected String endDate;
     protected String organizer;
+    @Setter
     protected String imageUrl;
 
     @Setter
@@ -51,4 +52,5 @@ public class GalleryEvent{
                 .imageUrl(imageUrl)
                 .build();
     }
+
 }

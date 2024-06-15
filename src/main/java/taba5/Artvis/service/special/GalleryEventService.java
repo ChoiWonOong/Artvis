@@ -11,6 +11,7 @@ import taba5.Artvis.repository.GalleryRepository;
 import taba5.Artvis.repository.Special.GalleryEventRepository;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +38,12 @@ public class GalleryEventService {
 
     public List<GalleryEvent> searchEvent(String keyword) {
         return galleryEventRepository.findByTitleContaining(keyword);
+    }
+
+    public GalleryEventDto setUrl(Long id, Map<String, String> dto) {
+        GalleryEvent event = galleryEventRepository.findById(id)
+                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+        event.setImageUrl(dto.get("url"));
+        return galleryEventRepository.save(event).toDto();
     }
 }
