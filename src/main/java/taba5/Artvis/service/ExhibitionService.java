@@ -17,7 +17,6 @@ import taba5.Artvis.domain.Exhibition.Tag;
 import taba5.Artvis.domain.History.History;
 import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
-import taba5.Artvis.domain.Recommend.InitRecommendDto;
 import taba5.Artvis.domain.Review.Review;
 import taba5.Artvis.dto.Exhibition.ExhibitionArtworkAddDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
@@ -96,7 +95,7 @@ public class ExhibitionService {
                 .tagList(exhibitionTag.stream().map(ExhibitionTag::getTagName).toList())
                 .build();
         dto.setIsLiked(exhibitionLikeRepository.existsByMember_IdAndExhibition_Id(memberId, exhibition.getId()));
-        List<Review> reviewList = reviewRepository.findAllByExhibitionId(exhibition.getId());
+        List<Review> reviewList = reviewRepository.findAllByExhibitionIdAndIsDummy(exhibition.getId(), false);
         dto.getReviewList().addAll(reviewList.stream().map(reviewService::reviewToDto).toList());
         return dto;
     }
@@ -165,7 +164,7 @@ public class ExhibitionService {
     }
 
     public List<ExhibitionResponseDto> searchExhibition(String keyword) {
-        List<Exhibition> list =  exhibitionRepository.findByTitleContaining(keyword);
+        List<Exhibition> list =  exhibitionRepository.findByTitleContainingAndIsDummy(keyword, false);
         List<ExhibitionResponseDto> result = list.stream().map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r)).toList();
         return result;
     }

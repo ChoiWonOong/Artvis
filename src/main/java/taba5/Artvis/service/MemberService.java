@@ -63,11 +63,13 @@ public class MemberService {
     public InitRecommendDto initRecommend(Long currentMemberId, InitRecommendDto dto) {
         Member member = getMember(currentMemberId);
         List<Long> exhibitionIds = dto.getExhibitionIdList();
-        exhibitionIds.stream().map(exhibitionId->{// 리뷰 생성
+        log.info("exhibitionIds: {}", exhibitionIds);
+        for(Long exhibitionId:exhibitionIds){
             Review review = new Review("null" , (byte) 5, member, exhibitionId);
             review.setDummy();
-            return reviewRepository.save(review);
-        });
+            reviewRepository.save(review);
+            log.info("review saved");
+        }
         dto.setMemberId(currentMemberId);
         return dto;
     }

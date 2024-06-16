@@ -48,7 +48,7 @@ public class ReviewService {
                 .build();
     }
     public List<ReviewResponseDto> getExhibitionReview(Long exhibitionId) {
-        List<Review> reviewList = reviewRepository.findAllByExhibitionId(exhibitionId);
+        List<Review> reviewList = reviewRepository.findAllByExhibitionIdAndIsDummy(exhibitionId, false);
         return reviewList.stream().map(this::reviewToDto).toList();
     }
     public int getExhibitionReviewCount(Exhibition exhibition) {
@@ -67,7 +67,7 @@ public class ReviewService {
     public List<Review> getMemberReview(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        return reviewRepository.findAllByMember(member);
+        return reviewRepository.findAllByMemberAndIsDummy(member, false);
     }
 
     public List<ReviewResponseDto> getReviewDtoListAsc() {
@@ -76,13 +76,13 @@ public class ReviewService {
     }
 
     public List<Review> searchReview(String keyword) {
-        return reviewRepository.findByContentsContaining(keyword);
+        return reviewRepository.findByContentsContainingAndIsDummy(keyword, false);
     }
     public List<Review> findReviewsOrderByRatingDesc() {
-        return reviewRepository.findAllOrderByRatingDesc();
+        return reviewRepository.findAllOrderByRatingDescAndIsDummy(false);
     }
     public List<Review> findReviewsOrderByRatingAsc() {
-        return reviewRepository.findAllOrderByRatingAsc();
+        return reviewRepository.findAllOrderByRatingAscAndIsDummy(false);
     }
 
     public List<Review> getReviewDtoListDesc() {

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ExhibitionRepository extends JpaRepository<Exhibition, Long> {
     Page<Exhibition> findByOrderById(Pageable pageable);
-    List<Exhibition> findByTitleContaining(@RequestParam("keyword") String keyword);
+    List<Exhibition> findByTitleContainingAndIsDummy(@RequestParam("keyword") String keyword, boolean isDummy);
     @Query("select e from Exhibition e where e.isDummy = true")
     List<Exhibition> findByDummyIsTrue();
     Optional<Exhibition> findByTitle(String title);

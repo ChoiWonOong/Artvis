@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import taba5.Artvis.Exception.ErrorResponse;
 import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.Recommend.InitRecommendDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
@@ -35,7 +36,7 @@ public class MemberController {
         try{
             return ResponseEntity.ok(memberService.initRecommend(SecurityUtil.getCurrentMemberId(), dto));
         }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
         }
     }
 }
