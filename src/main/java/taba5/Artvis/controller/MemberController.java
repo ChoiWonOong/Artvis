@@ -32,7 +32,10 @@ public class MemberController {
     }
     @PostMapping("/recommend/init")
     public ResponseEntity<?> initRecommend(@RequestBody InitRecommendDto dto){
-        memberService.initRecommend(SecurityUtil.getCurrentMemberId(), dto);
-        return ResponseEntity.ok().build();
+        try{
+            return ResponseEntity.ok(memberService.initRecommend(SecurityUtil.getCurrentMemberId(), dto));
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

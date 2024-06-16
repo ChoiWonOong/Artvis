@@ -17,6 +17,7 @@ import taba5.Artvis.domain.Exhibition.Tag;
 import taba5.Artvis.domain.History.History;
 import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
+import taba5.Artvis.domain.Recommend.InitRecommendDto;
 import taba5.Artvis.domain.Review.Review;
 import taba5.Artvis.dto.Exhibition.ExhibitionArtworkAddDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
@@ -236,5 +237,9 @@ public class ExhibitionService {
             Exhibition result = exhibitionRepository.findById(r).orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
             return result.toResponseDto();
         }).toList();
+    }
+
+    public List<Exhibition> getInitRecommend(Long currentMemberId) {
+        return exhibitionRepository.findByDummyIsTrue();
     }
 }

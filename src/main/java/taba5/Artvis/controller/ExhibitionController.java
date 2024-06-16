@@ -135,7 +135,16 @@ public class ExhibitionController {
             return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
         }
     }
-
+    @GetMapping("recommend/init")
+    public ResponseEntity<?> getInitRecommend(){
+        try{
+            return ResponseEntity.ok(exhibitionService.getInitRecommend(SecurityUtil.getCurrentMemberId()).stream().map(Exhibition::toResponseDto).toList());
+        }catch (RestApiException e){
+            return ErrorResponse.toResponseEntity(e.getErrorCode());
+        }catch (RuntimeException e){
+            return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
+        }
+    }
     // 추천 전시회 불러오기
 /*    @GetMapping("/list/recommend")
     public ResponseEntity<?> getRecommendExhibitionList(){

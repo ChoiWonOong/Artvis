@@ -16,6 +16,7 @@ import taba5.Artvis.dto.member.MyPageDto;
 import taba5.Artvis.repository.HistoryRepository;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
 import taba5.Artvis.repository.MemberRepository;
+import taba5.Artvis.repository.ReviewRepository;
 import taba5.Artvis.util.SecurityUtil;
 
 import java.util.ArrayList;
@@ -27,8 +28,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HistoryRepository historyRepository;
     private final ExhibitionLikeRepository exhibitionLikeRepository;
-    private final ExhibitionService exhibitionService;
-    private final ReviewService reviewService;
+    private final ReviewRepository reviewRepository;
 
     public MyPageDto getMyPage(){
         Member member = getMe();
@@ -66,7 +66,7 @@ public class MemberService {
         exhibitionIds.stream().map(exhibitionId->{// 리뷰 생성
             Review review = new Review("null" , (byte) 5, member, exhibitionId);
             review.setDummy();
-            return reviewService.saveReview(review);
+            return reviewRepository.save(review);
         });
         dto.setMemberId(currentMemberId);
         return dto;
