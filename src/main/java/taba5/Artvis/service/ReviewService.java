@@ -25,7 +25,11 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final ExhibitionRepository exhibitionRepository;
     private final MemberService memberService;
-
+    @Transactional
+    public ReviewResponseDto saveReview(Review review) {
+        review = reviewRepository.save(review);
+        return reviewToDto(review);
+    }
     @Transactional
     public ReviewResponseDto saveReview(ReviewRequestDto reviewDto) {
         Member member = memberService.getMe();
@@ -85,5 +89,10 @@ public class ReviewService {
         List<Review> list = reviewRepository.findAll();
         Collections.reverse(list);
         return list;
+    }
+
+    public int countByMember(Long memberId) {
+        Member member = memberService.getMember(memberId);
+        return reviewRepository.countByMember(member);
     }
 }

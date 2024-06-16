@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import taba5.Artvis.domain.Exhibition.Exhibition;
+import taba5.Artvis.domain.Recommend.InitRecommendDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.dto.HistoryDto;
 import taba5.Artvis.dto.member.MyPageDto;
@@ -28,5 +29,10 @@ public class MemberController {
     public ResponseEntity<List<ExhibitionResponseDto>> getHistory(){
         return ResponseEntity.ok(memberService.getHistory(SecurityUtil.getCurrentMemberId())
                 .stream().map(Exhibition::toResponseDto).toList());
+    }
+    @PostMapping("/recommend/init")
+    public ResponseEntity<?> initRecommend(@RequestBody InitRecommendDto dto){
+        memberService.initRecommend(SecurityUtil.getCurrentMemberId(), dto);
+        return ResponseEntity.ok().build();
     }
 }

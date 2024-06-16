@@ -12,6 +12,7 @@ import taba5.Artvis.dto.Exhibition.*;
 import taba5.Artvis.service.ExhibitionService;
 import taba5.Artvis.util.SecurityUtil;
 
+import java.security.Security;
 import java.util.List;
 @Slf4j
 @RestController
@@ -48,11 +49,23 @@ public class ExhibitionController {
             return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
         }
     }
+    @GetMapping("/{id}/recommend")
+    public ResponseEntity<?> getRecommendExhibitionId(@PathVariable(name = "id") Long exhibition_id){
+        try{
+            return ResponseEntity.ok(exhibitionService.getRecommendExhibitionId(SecurityUtil.getCurrentMemberId(), exhibition_id));
+        }catch (RestApiException e){
+            return ErrorResponse.toResponseEntity(e.getErrorCode());
+        }catch (RuntimeException e){
+            return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
     // id로 전시회 불러오기
     @GetMapping("/{id}")
     public ResponseEntity<?> getExhibition(@PathVariable(name = "id") Long id){
         try{
-            return ResponseEntity.ok(exhibitionService.getExhibition(id));
+            return ResponseEntity.ok(exhibitionService.getExhibition(id).toResponseDto());
         }catch (RestApiException e) {
             return ErrorResponse.toResponseEntity(e.getErrorCode());
         }catch (RuntimeException e){
@@ -100,7 +113,7 @@ public class ExhibitionController {
             //CollaborativeHome
             //return ResponseEntity.ok(exhibitionService.getCollaborativeHome());
             //ContentsBasedHome
-            return ResponseEntity.ok(exhibitionService.getContentsHome()
+            return ResponseEntity.ok(exhibitionService.getRecommendExhibitionList(SecurityUtil.getCurrentMemberId())
                     .stream().map(r->exhibitionService.getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r)));
             //return ResponseEntity.ok(exhibitionService.getExhibitionDtoList());
         }catch (RestApiException e) {
@@ -124,7 +137,7 @@ public class ExhibitionController {
     }
 
     // 추천 전시회 불러오기
-    @GetMapping("/list/recommend")
+/*    @GetMapping("/list/recommend")
     public ResponseEntity<?> getRecommendExhibitionList(){
         try{
             return ResponseEntity.ok(exhibitionService.getRecommendExhibitionList(SecurityUtil.getCurrentMemberId()));
@@ -133,7 +146,7 @@ public class ExhibitionController {
         }catch (RuntimeException e){
             return ErrorResponse.toResponseEntity(e, "BAD_REQUEST");
         }
-    }
+    }*/
     // 태그로 전시회 불러오기
     @GetMapping("/list/{tagName}")
     public ResponseEntity<?> getExhibitionListByTagName(@PathVariable(name = "tagName") String tagName){

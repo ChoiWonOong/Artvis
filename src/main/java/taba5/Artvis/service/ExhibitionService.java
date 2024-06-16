@@ -22,9 +22,8 @@ import taba5.Artvis.dto.Exhibition.ExhibitionArtworkAddDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionHistoryDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionRequestDto;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
-import taba5.Artvis.dto.Review.ReviewResponseDto;
 import taba5.Artvis.dto.flask.CollaborativeHomeRequestDto;
-import taba5.Artvis.dto.flask.ContentsHomeRequestDto;
+import taba5.Artvis.dto.flask.ContentsDetailRequestDto;
 import taba5.Artvis.dto.flask.FlaskResponseDto;
 import taba5.Artvis.repository.*;
 import taba5.Artvis.repository.LikeRepository.ExhibitionLikeRepository;
@@ -170,13 +169,12 @@ public class ExhibitionService {
         return result;
     }
 
-    public List<ExhibitionResponseDto> getRecommendExhibitionList(Long currentMemberId) {
-        Member member = memberRepository.findById(currentMemberId)
-                .orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
-        List<Exhibition> recommendList = exhibitionRepository.findAll();
-        return recommendList.stream()
-                .map((r)->getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), r))
-                .toList();
+    public List<Exhibition> getRecommendExhibitionList(Long memberId) throws JsonProcessingException {
+        if (reviewService.countByMember(memberId) < 6) {
+            return getContentsHome(memberId);
+        }else {
+            return getCollaborativeHome();
+        }
     }
 
     public List<ExhibitionResponseDto> setRecommend(Long id, List<Long> exhibitionIdList) {
@@ -205,10 +203,10 @@ public class ExhibitionService {
         exhibitionRepository.save(dummy);
         return getExhibitionResponseDto(SecurityUtil.getCurrentMemberId(), dummy);
     }
-    public List<Exhibition> getContentsHome() throws JsonProcessingException {
-        List<Long> historyAndLikes = memberService.getHistoryAndLikes(SecurityUtil.getCurrentMemberId())
+    public List<Exhibition> getContentsHome(Long memberId) throws JsonProcessingException {
+        List<Long> historyAndLikes = memberService.getHistoryAndLikes(memberId)
                 .stream().map(Exhibition::getId).toList();
-        CollaborativeHomeRequestDto flaskDto = new CollaborativeHomeRequestDto(SecurityUtil.getCurrentMemberId());
+        CollaborativeHomeRequestDto flaskDto = new CollaborativeHomeRequestDto(memberId);
         flaskDto.addExhibitionId(historyAndLikes);
         String url = "api/home1";
         FlaskResponseDto flaskResult = flaskService.getCollaborativeHome(flaskDto, url);
@@ -229,5 +227,14 @@ public class ExhibitionService {
     }
     public List<Exhibition> getDummyExhibition() {
         return exhibitionRepository.findByDummyIsTrue();
+    }
+
+    public List<ExhibitionResponseDto> getRecommendExhibitionId(Long currentMemberId, Long exhibition_id)throws JsonProcessingException {
+        ContentsDetailRequestDto dto = new ContentsDetailRequestDto(currentMemberId, exhibition_id);
+        FlaskResponseDto flaskResponse = flaskService.getContentsBased( dto, "api/exhibition");
+        return flaskResponse.getResult().stream().map(r->{
+            Exhibition result = exhibitionRepository.findById(r).orElseThrow(()->new RestApiException(ErrorCode.NOT_EXIST_ERROR));
+            return result.toResponseDto();
+        }).toList();
     }
 }

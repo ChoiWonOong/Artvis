@@ -9,6 +9,8 @@ import taba5.Artvis.domain.Exhibition.Exhibition;
 import taba5.Artvis.domain.History.History;
 import taba5.Artvis.domain.Like.ExhibitionLike;
 import taba5.Artvis.domain.Member;
+import taba5.Artvis.domain.Recommend.InitRecommendDto;
+import taba5.Artvis.domain.Review.Review;
 import taba5.Artvis.dto.Exhibition.ExhibitionResponseDto;
 import taba5.Artvis.dto.member.MyPageDto;
 import taba5.Artvis.repository.HistoryRepository;
@@ -25,6 +27,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HistoryRepository historyRepository;
     private final ExhibitionLikeRepository exhibitionLikeRepository;
+    private final ExhibitionService exhibitionService;
+    private final ReviewService reviewService;
 
     public MyPageDto getMyPage(){
         Member member = getMe();
@@ -54,5 +58,17 @@ public class MemberService {
         request.addAll(likes);
         log.info("history+likes: {}", request.stream().map(Exhibition::getTitle).toList());
         return request.stream().distinct().toList();
+    }
+
+    public InitRecommendDto initRecommend(Long currentMemberId, InitRecommendDto dto) {
+        Member member = getMember(currentMemberId);
+        List<Long> exhibitionIds = dto.getExhibitionIdList();
+        exhibitionIds.stream().map(exhibitionId->{// 리뷰 생성
+            Review review = new Review("null" , (byte) 5, member, exhibitionId);
+            review.setDummy();
+            return reviewService.saveReview(review);
+        });
+        dto.setMemberId(currentMemberId);
+        return dto;
     }
 }

@@ -13,6 +13,8 @@ public interface ReviewRepository extends JpaRepository<Review, ReviewId>{
 
     List<Review> findByOrderByIdDesc();
     List<Review> findAllByMember(Member member);
+    @Query("select count(r) from Review r where r.member = :member")
+    int countByMember(Member member);
     @Query("select count(r) from Review r where r.exhibitionId = :exhibitionId")
     int countByExhibition(Exhibition exhibition);
     @Query("select avg(r.rating) from Review r where r.exhibitionId = :exhibitionId")
